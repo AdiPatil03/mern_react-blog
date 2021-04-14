@@ -1,0 +1,31 @@
+{
+    "home": {
+        "welcome":  "Welcome",
+        "guest": "Guest",
+        "tags": "Tags",
+        "archives": "Archives",
+        "elsewhere": "Elsewhere"
+    },
+    "login": {
+        "user-name": "Username",
+        "password":  "Password"
+    },
+    "post": {
+        "title": "Title",
+        "body": "Body",
+        "tags": "Tags",
+        "submit": "Submit"
+    },
+    "signup": {
+        "user-name": "Username",
+        "password":  "Password",
+        "confirm-password": "Confirm Password"
+    },
+    "nav-bar": {
+        "log-in":   "Log In",
+        "home":     "Home",
+        "sign-up":  "Sign Up",
+        "new-post": "New Post",
+        "log-out":  "Log Out"
+    }
+}
