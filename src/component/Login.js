@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Translation} from 'react-i18next';
 import {AuthService} from '../common/services/auth-service';
-import Error from './Error';
+import Banner from './Banner';
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -11,7 +11,7 @@ export default class Login extends React.Component {
         this.state = {
             username: '',
             password: '',
-            error:    ''
+            banner:   {}
         };
     }
 
@@ -28,7 +28,10 @@ export default class Login extends React.Component {
             this.setState({
                 username: '',
                 password: '',
-                error:    error.message
+                banner:   {
+                    type:    'danger',
+                    message: error.message
+                }
             });
         });
         event.preventDefault();
@@ -56,7 +59,7 @@ export default class Login extends React.Component {
         );
         return (
             <>
-                <Error error={this.state.error}/>
+                <Banner banner={this.state.banner}/>
                 <form style={{marginTop: '50px'}} className="offset-md-2 col-md-9" onSubmit={this.submit}>
                     <div className="form-group row">
                         <label className="col-sm-4 col-form-label">{translate('login.user-name')}:</label>

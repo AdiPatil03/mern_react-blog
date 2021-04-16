@@ -3,6 +3,7 @@ import i18n from '../i18n';
 import PropTypes from 'prop-types';
 import {Translation} from 'react-i18next';
 import {Link} from 'react-router-dom';
+import _ from 'lodash';
 
 /* eslint-disable */
 export default class NavBar extends React.Component {
@@ -16,18 +17,11 @@ export default class NavBar extends React.Component {
     }
 
     componentDidMount = () => {
-        let pathname = window.location.pathname;
-        let index = pathname.lastIndexOf('/');
-        let nav = pathname.substr(1);
+        this.clearActive(this.props.navbar);
+    }
 
-        if (index > 0) {
-            nav = pathname.substr(1, index - 1);
-        }
-
-        if (nav === '') {
-            nav = 'home';
-        }
-        this.clearActive(nav);
+    componentDidUpdate = () => {
+        this.clearActive(this.props.navbar);
     }
 
     showCollapsedMenu = () => {
@@ -90,21 +84,23 @@ export default class NavBar extends React.Component {
         this.props.clearLoggedIn();
     }
 
-    setActiveLink = event => {
+    setNavbar = navbar => {
         let domElements = document.getElementsByClassName('nav-link');
         for (let i = 0; i < domElements.length; i++) {
             domElements[i].className = 'nav-link';
         }
-        event.target.className = event.target.className.concat(' active');
+        this.props.setNavbar(navbar);
     };
 
     clearActive = id => {
         let currentNavEle = document.getElementById(id);
-        let domElements = document.getElementsByClassName('nav-link');
-        for (let i = 0; i < domElements.length; i++) {
-            domElements[i].className = 'nav-link';
+        if (!_.isNull(currentNavEle)) {
+            let domElements = document.getElementsByClassName('nav-link');
+            for (let i = 0; i < domElements.length; i++) {
+                domElements[i].className = 'nav-link';
+            }
+            currentNavEle.className = 'nav-link active';
         }
-        currentNavEle.className = 'nav-link active';
     };
 
     render = () => {
@@ -112,23 +108,23 @@ export default class NavBar extends React.Component {
         let navbarContent =
             <>
                 <li className="nav-item">
-                    <Link className="nav-link" id="home" onClick={this.setActiveLink} to="/">{translate('nav-bar.home')}</Link>
+                    <Link className="nav-link" id="home" onClick={() => this.setNavbar('home')} to="/">{translate('nav-bar.home')}</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" id="login" onClick={this.setActiveLink} to="/login">{translate('nav-bar.log-in')}</Link>
+                    <Link className="nav-link" id="login" onClick={() => this.setNavbar('login')} to="/login">{translate('nav-bar.log-in')}</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" id="signup" onClick={this.setActiveLink} to="/signup">{translate('nav-bar.sign-up')}</Link>
+                    <Link className="nav-link" id="signup" onClick={() => this.setNavbar('signup')} to="/signup">{translate('nav-bar.sign-up')}</Link>
                 </li>
             </>;
         if (this.props.loggedin) {
             navbarContent =
             <>
                 <li className="nav-item">
-                    <Link className="nav-link" id="home" onClick={this.setActiveLink} to="/">{translate('nav-bar.home')}</Link>
+                    <Link className="nav-link" id="home" onClick={() => this.setNavbar('home')} to="/">{translate('nav-bar.home')}</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" id="create-post" onClick={this.setActiveLink} to="/create-post">{translate('nav-bar.new-post')}</Link>
+                    <Link className="nav-link" id="create-post" onClick={() => this.setNavbar('create-post')} to="/create-post">{translate('nav-bar.new-post')}</Link>
                 </li>
                 <li className="nav-item">
                     <Link className="nav-link" onClick={this.clearLoggedIn} to="/">{translate('nav-bar.log-out')}</Link>

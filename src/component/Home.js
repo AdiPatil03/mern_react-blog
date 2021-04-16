@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import PostThumbnail from './PostThumbnail';
 
-const Home = ({posts}) => (
+const Home = ({posts, currentUser}) => (
     <>
         {posts.map((post, key) =>
-            <PostThumbnail key={key} post={post} thumbnail={true}></PostThumbnail>
+            <PostThumbnail key={key} post={post} thumbnail={true} currentUser={currentUser}></PostThumbnail>
         )}
     </>
 );
@@ -13,5 +13,6 @@ const Home = ({posts}) => (
 export default Home;
 
 Home.propTypes = {
-    posts: PropTypes.array
+    posts:       PropTypes.array,
+    currentUser: PropTypes.string
 };

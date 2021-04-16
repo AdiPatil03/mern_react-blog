@@ -36,13 +36,14 @@ export class AuthService {
         });
     }
 
-    signup(name) {
+    signup(user) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                if (!this.users.includes(name)) {
-                    this.users.push(name);
-                    this.currentUser = name;
-                    resolve({user: name});
+                let userExists = this.users.find(user1 => user.username === user1.username);
+                if (userExists === undefined) {
+                    this.users.push(user);
+                    this.currentUser = user;
+                    resolve({user});
                 } else {
                     reject(new Error('This user already exists.'));
                 }
