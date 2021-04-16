@@ -6,6 +6,8 @@ import {
     Link
 } from 'react-router-dom';
 import {Translation} from 'react-i18next';
+import _ from 'lodash';
+
 import Header from './Header';
 import NavBar from './NavBar';
 import PostService from '../common/services/post-service';
@@ -16,6 +18,7 @@ import SignUp from './SignUp';
 import Post from './Post';
 import Tag from './Tag';
 import Archive from './Archive';
+import Banner from './Banner';
 
 /* eslint-disable */
 export default class LandingPage extends React.Component {
@@ -24,40 +27,105 @@ export default class LandingPage extends React.Component {
         super();
         this.postService = new PostService();
         this.state = {
-            archives: [],
-            tags: [],
-            posts: [],
-            currentUser: ''
+            archives:    [],
+            tags:        [],
+            posts:       [],
+            currentUser: '',
+            navbar:      'home',
+            banner:      {}
         };
     }
     
-    componentDidMount = () => {        
+    componentDidMount = () => {    
+        this._isMounted = true;    
         this.postService.allArchives().then(data => {
-            this.setState({
-                archives: data.archives
-            });
-        });        
+            if (this._isMounted) {
+                this.setState({
+                    archives: data.archives
+                });
+            }
+        }).catch(error => {
+            if (this._isMounted) {
+                this.setState({
+                    banner: {
+                        type:    'danger',
+                        message: error.message
+                    }
+                });
+            }
+        });       
         this.postService.allTags().then(data => {
-            this.setState({
-                tags: data.tags
-            });
+            if (this._isMounted) {
+                this.setState({
+                    tags: data.tags
+                });
+            }
+        }).catch(error => {
+            if (this._isMounted) {
+                this.setState({
+                    banner: {
+                        type:    'danger',
+                        message: error.message
+                    }
+                });
+            }
         });
         this.postService.allPostPreviews().then(data => {
-            this.setState({
-                posts: data.posts
-            });
+            if (this._isMounted) {
+                this.setState({
+                    posts: data.posts
+                });
+            }
+        }).catch(error => {
+            if (this._isMounted) {
+                this.setState({
+                    banner: {
+                        type:    'danger',
+                        message: error.message
+                    }
+                });
+            }
         });
+        this.setNavbarOnLoad();
+    }
+
+    componentWillUnmount = () => {
+        this._isMounted = false;
     }
 
     setLoggedIn = user => {
         this.setState({
-            currentUser: user
+            currentUser: user,
+            navbar: 'home'
         });
     }
 
     clearLoggedIn = () => {
         this.setState({
             currentUser: ''
+        });
+    }
+
+    setNavbar = navbar => {
+        this.setState({
+            navbar
+        });
+    }
+
+    setNavbarOnLoad = () => {        
+        let pathname = window.location.pathname;
+        let index = pathname.lastIndexOf('/');
+        let nav = pathname.substr(1);
+
+        if (index > 0) {
+            nav = pathname.substr(1, index - 1);
+        }
+
+        if (_.isEmpty(nav) || nav === 'post') {
+            nav = 'home';
+        }
+        this.setState({
+            navbar: nav
         });
     }
 
@@ -76,13 +144,18 @@ export default class LandingPage extends React.Component {
                 <Router>
                     <div className="container">
                     <Header/>
-                    <NavBar loggedin={this.state.currentUser ? true : false} clearLoggedIn={this.clearLoggedIn}/>
+                    <NavBar
+                        loggedin={this.state.currentUser ? true : false}
+                        clearLoggedIn={this.clearLoggedIn}
+                        navbar={this.state.navbar}
+                        setNavbar={this.setNavbar}/>
                     </div>
         
                     <main role="main" className="container">
                         <div className="row">
                         <div className="col-md-8 blog-main">
                             <div className="blog-post">
+                                <Banner banner={this.state.banner}/>
                                 <Switch>
                                     <Route path="/" render={homeComponent} exact/>
                                     <Route path="/login" render={loginComponent}/>

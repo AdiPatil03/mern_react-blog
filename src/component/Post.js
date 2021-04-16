@@ -4,6 +4,7 @@ import _ from 'lodash';
 import PostService from '../common/services/post-service';
 import PostThumbnail from './PostThumbnail';
 import PostForm from './PostForm';
+import Banner from './Banner';
 
 export default class Post extends React.Component {
     constructor(props) {
@@ -11,19 +12,28 @@ export default class Post extends React.Component {
         this.postService = new PostService();
         this.state = {
             editMode: false,
-            post:     {
-                tags: []
-            }
+            post:     {},
+            banner:   {}
         };
     }
 
     componentDidMount = () => {
+        this._isMounted = true;
         const slug = this.props.match.params.slug;
         if (!_.isUndefined(slug)) {
             this.postService.find(slug).then(data => {
                 this.setState({
                     post: data.post
                 });
+            }).catch(error => {
+                if (this._isMounted) {
+                    this.setState({
+                        banner: {
+                            type:    'danger',
+                            message: error.message
+                        }
+                    });
+                }
             });
         }
     }
@@ -42,8 +52,13 @@ export default class Post extends React.Component {
         });
     }
 
+    componentWillUnmount = () => {
+        this._isMounted = false;
+    }
+
     render = () => (
         <>
+            <Banner banner={this.state.banner} />
             {this.state.editMode
                 ? <PostForm post={this.state.post} tags={this.props.tags} clearEditMode={this.clearEditMode} {...this.props}/>
                 : <PostThumbnail

@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Translation} from 'react-i18next';
-import Error from './Error';
+import _ from 'lodash';
+import Banner from './Banner';
 import PostService from '../common/services/post-service';
 
 export default class PostForm extends React.Component {
@@ -22,8 +23,16 @@ export default class PostForm extends React.Component {
             body:     props.post ? props.post.body : '',
             tags:     tags,
             editMode: props.post,
-            error:    ''
+            banner:   {}
         };
+    }
+
+    componentDidMount = () => {
+        if (_.isEmpty(this.props.currentUser)) {
+            this.props.history.push({
+                pathname: '/'
+            });
+        }
     }
 
     handleTitleChange = event => {
@@ -68,7 +77,10 @@ export default class PostForm extends React.Component {
                 this.props.clearEditMode(post);
             }).catch(error => {
                 this.setState({
-                    error: error.message
+                    banner: {
+                        type:    'danger',
+                        message: error.message
+                    }
                 });
             });
         } else {
@@ -78,7 +90,10 @@ export default class PostForm extends React.Component {
                 });
             }).catch(error => {
                 this.setState({
-                    error: error.message
+                    banner: {
+                        type:    'danger',
+                        message: error.message
+                    }
                 });
             });
         }
@@ -90,7 +105,7 @@ export default class PostForm extends React.Component {
         const translate = (word) => (<Translation>{(t, {i18n}) => t(word)}</Translation>);
         return (
             <>
-                <Error error={this.state.error}/>
+                <Banner banner={this.state.banner}/>
                 <form style={{marginTop: '50px'}} onSubmit={this.submit} className="offset-md-1 col-md-10">
                     <div className="form-group row ">
                         <label className="col-sm-2 col-form-label">{translate('post.title')}:</label>

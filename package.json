@@ -1,5 +1,5 @@
 {
-  "name": "react-blog",
+  "name": "mern_react-blog",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -47,5 +47,7 @@
   "devDependencies": {
     "eslint": "^7.24.0",
     "eslint-plugin-react": "^7.23.2"
-  }
+  },
+  "jest": {
+   }
 }

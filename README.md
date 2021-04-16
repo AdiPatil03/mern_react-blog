@@ -19,6 +19,10 @@ You will also see any lint errors in the console.
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-npmreact-app/docs/running-tests) for more information.
 
+### `npm run lint`
+
+This will check all the files for any linting errors
+
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
