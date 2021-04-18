@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Translation} from 'react-i18next';
-import {AuthService} from '../common/services/auth-service';
 import Banner from './Banner';
 import Regexpattern from '../common/Regexpattern';
 
 export default class SignUp extends React.Component {
     constructor(props) {
         super(props);
-        this.authService = new AuthService();
         this.regex = Regexpattern();
         this.state = {
             username: '',
@@ -19,25 +17,50 @@ export default class SignUp extends React.Component {
     }
 
     submit = (event) => {
-        this.authService.signup({
+        const data = {
             username: this.state.username,
             password: this.state.password
-        }).then(() => {
-            this.props.setLoggedIn(this.state.username);
-            this.props.history.push({
-                pathname: '/'
-            });
-        }).catch(error => {
+        };
+
+        fetch('http://localhost:3010/api/signup', {
+            method:  'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (response.status === 200) {
+                response.json().then(resp => {
+                    this.props.setLoggedIn(resp.user);
+                    this.props.history.push({
+                        pathname: '/'
+                    });
+                });
+            } else {
+                response.json().then(msg => {
+                    this.setState({
+                        username: '',
+                        password: '',
+                        cPwd:     '',
+                        banner:   {
+                            type:    'danger',
+                            message: msg.message
+                        }
+                    });
+                });
+            }
+        }).catch(() => {
             this.setState({
                 username: '',
                 password: '',
                 cPwd:     '',
                 banner:   {
                     type:    'danger',
-                    message: error.message
+                    message: 'Something went wrong!'
                 }
             });
         });
+
         event.preventDefault();
     }
 

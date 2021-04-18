@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import PostService from '../common/services/post-service';
-import PostThumbnail from './PostThumbnail';
-import PostForm from './PostForm';
+import APIServices from '../common/services/api-service';
+import ArticleThumbnail from './ArticleThumbnail';
+import ArticleForm from './ArticleForm';
 import Banner from './Banner';
 
-export default class Post extends React.Component {
+export default class Article extends React.Component {
     constructor(props) {
         super(props);
-        this.postService = new PostService();
+        this.apiServices = new APIServices();
         this.state = {
             editMode: false,
-            post:     {},
+            article:  {},
             banner:   {}
         };
     }
@@ -20,12 +20,18 @@ export default class Post extends React.Component {
     componentDidMount = () => {
         this._isMounted = true;
         const slug = this.props.match.params.slug;
+
         if (!_.isUndefined(slug)) {
-            this.postService.find(slug).then(data => {
-                this.setState({
-                    post: data.post
-                });
-            }).catch(error => {
+
+            this.apiServices.find(slug)
+            .then(data => {
+                if (this._isMounted) {
+                    this.setState({
+                        article: data
+                    });
+                }
+            })
+            .catch(error => {
                 if (this._isMounted) {
                     this.setState({
                         banner: {
@@ -45,10 +51,10 @@ export default class Post extends React.Component {
         event.preventDefault();
     }
 
-    clearEditMode = post => {
+    clearEditMode = article => {
         this.setState({
             editMode: false,
-            post:     post
+            article:  article
         });
     }
 
@@ -60,9 +66,9 @@ export default class Post extends React.Component {
         <>
             <Banner banner={this.state.banner} />
             {this.state.editMode
-                ? <PostForm post={this.state.post} tags={this.props.tags} clearEditMode={this.clearEditMode} {...this.props}/>
-                : <PostThumbnail
-                    post={this.state.post}
+                ? <ArticleForm article={this.state.article} tags={this.props.tags} clearEditMode={this.clearEditMode} {...this.props}/>
+                : <ArticleThumbnail
+                    article={this.state.article}
                     currentUser={this.props.currentUser}
                     setEdit={this.setEditMode}
                     {...this.props}
@@ -72,7 +78,7 @@ export default class Post extends React.Component {
     );
 }
 
-Post.propTypes = {
+Article.propTypes = {
     match: PropTypes.shape({
         params: PropTypes.shape({
             slug: PropTypes.string
