@@ -124,7 +124,7 @@ export default class NavBar extends React.Component {
                     <Link className="nav-link" id="home" onClick={() => this.setNavbar('home')} to="/">{translate('nav-bar.home')}</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" id="create-post" onClick={() => this.setNavbar('create-post')} to="/create-post">{translate('nav-bar.new-post')}</Link>
+                    <Link className="nav-link" id="create-article" onClick={() => this.setNavbar('create-article')} to="/create-article">{translate('nav-bar.new-post')}</Link>
                 </li>
                 <li className="nav-item">
                     <Link className="nav-link" onClick={this.clearLoggedIn} to="/">{translate('nav-bar.log-out')}</Link>

@@ -10,10 +10,11 @@
         "user-name": "Username",
         "password":  "Password"
     },
-    "post": {
+    "article": {
         "title": "Title",
         "body": "Body",
         "tags": "Tags",
+        "add-new-tag": "Add Tag",
         "submit": "Submit"
     },
     "signup": {
@@ -25,7 +26,7 @@
         "log-in":   "Log In",
         "home":     "Home",
         "sign-up":  "Sign Up",
-        "new-post": "New Post",
+        "new-post": "New Article",
         "log-out":  "Log Out"
     }
 }

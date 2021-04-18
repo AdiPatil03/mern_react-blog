@@ -135,14 +135,4 @@
         "wrap-iife":                     2
     }
 }
-/*
-Rules that would require some editing of existing code.
 
-A few failures
-"no-param-reassign":          2,
-"spaced-comment":             [1, "always", {"exceptions": ["-", "=", "*"], "markers": ["js", "global"]}],
-
-Many failures
-"space-before-blocks":        2,
-*/
-//@formatter:on

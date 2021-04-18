@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Translation} from 'react-i18next';
-import {AuthService} from '../common/services/auth-service';
 import Banner from './Banner';
 
 export default class Login extends React.Component {
     constructor(props) {
         super(props);
-        this.authService = new AuthService();
         this.state = {
             username: '',
             password: '',
@@ -16,21 +14,44 @@ export default class Login extends React.Component {
     }
 
     submit = event => {
-        this.authService.login({
+        const data = {
             username: this.state.username,
             password: this.state.password
-        }).then(() => {
-            this.props.setLoggedIn(this.state.username);
-            this.props.history.push({
-                pathname: '/'
-            });
-        }).catch(error => {
+        };
+
+        fetch('http://localhost:3010/api/login', {
+            method:  'post',
+            body:    JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then((response) => {
+            if (response.status === 200) {
+                response.json().then(resp => {
+                    this.props.setLoggedIn(resp.user);
+                    this.props.history.push({
+                        pathname: '/'
+                    });
+                });
+            } else {
+                response.json().then(error => {
+                    this.setState({
+                        username: '',
+                        password: '',
+                        banner:   {
+                            type:    'danger',
+                            message: error.message
+                        }
+                    });
+                });
+            }
+        }).catch(() => {
             this.setState({
                 username: '',
                 password: '',
                 banner:   {
                     type:    'danger',
-                    message: error.message
+                    message: 'Something went wrong!'
                 }
             });
         });

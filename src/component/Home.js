@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import PostThumbnail from './PostThumbnail';
+import ArticleThumbnail from './ArticleThumbnail';
 
-const Home = ({posts, currentUser}) => (
+const Home = ({articles, currentUser}) => (
     <>
-        {posts.map((post, key) =>
-            <PostThumbnail key={key} post={post} thumbnail={true} currentUser={currentUser}></PostThumbnail>
+        {articles.map((article, key) =>
+            <ArticleThumbnail key={key} article={article} thumbnail={true} currentUser={currentUser}></ArticleThumbnail>
         )}
     </>
 );
@@ -13,6 +13,6 @@ const Home = ({posts, currentUser}) => (
 export default Home;
 
 Home.propTypes = {
-    posts:       PropTypes.array,
+    articles:    PropTypes.array,
     currentUser: PropTypes.string
 };

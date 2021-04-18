@@ -10,12 +10,12 @@ import _ from 'lodash';
 
 import Header from './Header';
 import NavBar from './NavBar';
-import PostService from '../common/services/post-service';
+import APIServices from '../common/services/api-service';
 import Home from './Home';
 import Login from './Login';
-import PostForm from './PostForm';
+import ArticleForm from './ArticleForm';
 import SignUp from './SignUp';
-import Post from './Post';
+import Article from './Article';
 import Tag from './Tag';
 import Archive from './Archive';
 import Banner from './Banner';
@@ -25,42 +25,37 @@ export default class LandingPage extends React.Component {
 
     constructor(){
         super();
-        this.postService = new PostService();
+        this.apiServices = new APIServices();
         this.state = {
             archives:    [],
             tags:        [],
-            posts:       [],
+            articles:    [],
             currentUser: '',
             navbar:      'home',
             banner:      {}
         };
     }
     
-    componentDidMount = () => {    
-        this._isMounted = true;    
-        this.postService.allArchives().then(data => {
+    componentDidMount = () => {
+        this._isMounted = true;
+        let currentUser = sessionStorage.getItem('username');
+        if (!_.isNull(currentUser)) {
+            this.setState({
+                currentUser
+            });
+        }
+
+        this.apiServices.allArticlesPreviews()
+        .then(response => {
             if (this._isMounted) {
                 this.setState({
-                    archives: data.archives
+                    articles: response.previews,
+                    archives: response.archives,
+                    tags:     response.tags,
                 });
             }
-        }).catch(error => {
-            if (this._isMounted) {
-                this.setState({
-                    banner: {
-                        type:    'danger',
-                        message: error.message
-                    }
-                });
-            }
-        });       
-        this.postService.allTags().then(data => {
-            if (this._isMounted) {
-                this.setState({
-                    tags: data.tags
-                });
-            }
-        }).catch(error => {
+        })
+        .catch(error => {
             if (this._isMounted) {
                 this.setState({
                     banner: {
@@ -70,22 +65,7 @@ export default class LandingPage extends React.Component {
                 });
             }
         });
-        this.postService.allPostPreviews().then(data => {
-            if (this._isMounted) {
-                this.setState({
-                    posts: data.posts
-                });
-            }
-        }).catch(error => {
-            if (this._isMounted) {
-                this.setState({
-                    banner: {
-                        type:    'danger',
-                        message: error.message
-                    }
-                });
-            }
-        });
+
         this.setNavbarOnLoad();
     }
 
@@ -94,6 +74,7 @@ export default class LandingPage extends React.Component {
     }
 
     setLoggedIn = user => {
+        sessionStorage.setItem('username', user);
         this.setState({
             currentUser: user,
             navbar: 'home'
@@ -101,6 +82,7 @@ export default class LandingPage extends React.Component {
     }
 
     clearLoggedIn = () => {
+        sessionStorage.removeItem('username');
         this.setState({
             currentUser: ''
         });
@@ -108,7 +90,8 @@ export default class LandingPage extends React.Component {
 
     setNavbar = navbar => {
         this.setState({
-            navbar
+            navbar,
+            banner: {}
         });
     }
 
@@ -121,7 +104,7 @@ export default class LandingPage extends React.Component {
             nav = pathname.substr(1, index - 1);
         }
 
-        if (_.isEmpty(nav) || nav === 'post') {
+        if (_.isEmpty(nav) || nav === 'article') {
             nav = 'home';
         }
         this.setState({
@@ -131,11 +114,11 @@ export default class LandingPage extends React.Component {
 
     render = () => {        
         const translate = (word) => (<Translation>{(t, {i18n}) => t(word)}</Translation>);
-        const homeComponent = (props) => <Home posts={this.state.posts} currentUser={this.state.currentUser} {...props}/>
+        const homeComponent = (props) => <Home articles={this.state.articles} currentUser={this.state.currentUser} {...props}/>
         const loginComponent = (props) => <Login setLoggedIn={this.setLoggedIn} {...props}/>;
         const signupComponent = (props) => <SignUp setLoggedIn={this.setLoggedIn} {...props}/>;
-        const postFormComponent = (props) => <PostForm tags={this.state.tags} currentUser={this.state.currentUser} {...props}/>;
-        const postComponent = (props) => <Post tags={this.state.tags} currentUser={this.state.currentUser} {...props}/>
+        const articleFormComponent = (props) => <ArticleForm tags={this.state.tags} currentUser={this.state.currentUser} {...props}/>;
+        const articleComponent = (props) => <Article tags={this.state.tags} currentUser={this.state.currentUser} {...props}/>
         const archiveComponent = (props) => <Archive currentUser={this.state.currentUser} {...props}/>
         const tagComponent = (props) => <Tag currentUser={this.state.currentUser} {...props}/>
 
@@ -159,10 +142,10 @@ export default class LandingPage extends React.Component {
                                 <Switch>
                                     <Route path="/" render={homeComponent} exact/>
                                     <Route path="/login" render={loginComponent}/>
-                                    <Route path="/post/:slug" render={postComponent}/>
+                                    <Route path="/article/:slug" render={articleComponent}/>
                                     <Route path="/tags/:tag" render={tagComponent}/>
                                     <Route path="/archives/:archive" render={archiveComponent}/>
-                                    <Route path="/create-post" render={postFormComponent}/>
+                                    <Route path="/create-article" render={articleFormComponent}/>
                                     <Route path="/signup" render={signupComponent}/>
                                 </Switch>
                             </div>       
