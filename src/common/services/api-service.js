@@ -6,7 +6,7 @@ export default class APIServices {
 
     allArticlesPreviews() {
         return new Promise((resolve, reject) => {
-            fetch('http://localhost:3010/api/all-articles')
+            fetch('/api/all-articles')
             .then(response => {
                 if (response.status === 200) {
                     response.json().then(data => resolve({...data}));
@@ -19,7 +19,7 @@ export default class APIServices {
 
 	// allArchives() {
 	// 	return new Promise((resolve, reject) => {
-    //         fetch('http://localhost:3010/api/all-archives')
+    //         fetch('/api/all-archives')
     //         .then(response => {
     //             if (response.status === 200) {
     //                 response.json().then(data => resolve({data}));
@@ -32,7 +32,7 @@ export default class APIServices {
 
 	// allTags() {
 	// 	return new Promise((resolve, reject) => {
-    //         fetch('http://localhost:3010/api/all-tags')
+    //         fetch('/api/all-tags')
     //         .then(response => {
     //             if (response.status === 200) {
     //                 response.json().then(data => resolve({data}));
@@ -46,7 +46,7 @@ export default class APIServices {
     find(slug) {
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         return new Promise((resolve, reject) => {
-            fetch(`http://localhost:3010/api/article/${slug}`)
+            fetch(`/api/article/${slug}`)
             .then(response => {
                 if (response.status === 200) {
                     response.json().then(data => {
@@ -64,7 +64,7 @@ export default class APIServices {
 
     articlesByTag(tag) {
         return new Promise((resolve, reject) => {
-            fetch(`http://localhost:3010/api/tag/${tag}`)
+            fetch(`/api/tag/${tag}`)
             .then(response => {
                 if (response.status === 200) {
                     response.json().then(data => resolve([...data]));
@@ -77,7 +77,7 @@ export default class APIServices {
 
     articlesByArchive(archive) {
         return new Promise((resolve, reject) => {
-            fetch(`http://localhost:3010/api/archive/${archive}`)
+            fetch(`/api/archive/${archive}`)
             .then(response => {
                 if (response.status === 200) {
                     response.json().then(data => resolve([...data]));
@@ -90,7 +90,7 @@ export default class APIServices {
 
 	create(article) {
 		return new Promise((resolve, reject) => {
-            fetch('http://localhost:3010/api/new-article', {
+            fetch('/api/new-article', {
                 method:  'post',
                 body:    JSON.stringify(article),
                 headers: {
@@ -108,7 +108,7 @@ export default class APIServices {
 
     update(article) {
         return new Promise((resolve, reject) => {
-            fetch(`http://localhost:3010/api/update-article/${article.slug}`, {
+            fetch(`/api/update-article/${article.slug}`, {
                 method:  'post',
                 body:    JSON.stringify(article),
                 headers: {
