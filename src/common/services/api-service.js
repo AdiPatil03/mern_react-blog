@@ -17,32 +17,6 @@ export default class APIServices {
         });
 	}
 
-	// allArchives() {
-	// 	return new Promise((resolve, reject) => {
-    //         fetch('/api/all-archives')
-    //         .then(response => {
-    //             if (response.status === 200) {
-    //                 response.json().then(data => resolve({data}));
-    //             } else {
-    //                 response.json().then(error => reject({message: error.message}));
-    //             }
-    //         }).catch(error => reject({message: error.message}));
-	// 	});		
-	// }
-
-	// allTags() {
-	// 	return new Promise((resolve, reject) => {
-    //         fetch('/api/all-tags')
-    //         .then(response => {
-    //             if (response.status === 200) {
-    //                 response.json().then(data => resolve({data}));
-    //             } else {
-    //                 response.json().then(error => reject({message: error.message}));
-    //             }
-    //         }).catch(error => reject({message: error.message}));
-	// 	});		
-	// }
-
     find(slug) {
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         return new Promise((resolve, reject) => {
@@ -124,30 +98,39 @@ export default class APIServices {
         });
     }
 
-	login(name) {
+	login(data) {
 		return new Promise((resolve, reject) => {
-		  setTimeout(() => {
-				if (this.users.includes(name)) {
-					this.currentUser = name;
-					resolve({ user: name });
-				} else {
-					reject(new Error('Invalid credentials.'));
-				}
-		  }, this.delay);
+            fetch('/api/login', {
+                method:  'post',
+                body:    JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }).then((response) => {
+                if (response.status === 200) {
+                    response.json().then(data => resolve({...data}));
+                } else {
+                    response.json().then(error => reject({message: error.message}));
+                }
+            }).catch(error => reject({message: error.message}));
 		});
 	}
 
-	signup(name) {
+	signup(data) {
 		return new Promise((resolve, reject) => {
-		  setTimeout(() => {
-				if (!this.users.includes(name)) {
-					this.users.push(name);
-					this.currentUser = name;
-					resolve({ user: name });
-				} else {
-					reject(new Error('This user already exists.'));
-				}
-		  }, this.delay);
+            fetch('/api/signup', {
+                method:  'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (response.status === 200) {
+                    response.json().then(data => resolve({...data}));
+                } else {
+                    response.json().then(error => reject({message: error.message}));
+                }
+            }).catch(error => reject({message: error.message}));
 		});		
 	}
 }

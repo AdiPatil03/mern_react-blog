@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Translation} from 'react-i18next';
+import APIService from '../common/services/api-service';
 import Banner from './Banner';
 import Regexpattern from '../common/Regexpattern';
 
 export default class SignUp extends React.Component {
     constructor(props) {
         super(props);
+        this.apiService = new APIService();
         this.regex = Regexpattern();
         this.state = {
             username: '',
@@ -22,41 +24,21 @@ export default class SignUp extends React.Component {
             password: this.state.password
         };
 
-        fetch('http://localhost:3010/api/signup', {
-            method:  'post',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then(response => {
-            if (response.status === 200) {
-                response.json().then(resp => {
-                    this.props.setLoggedIn(resp.user);
-                    this.props.history.push({
-                        pathname: '/'
-                    });
-                });
-            } else {
-                response.json().then(msg => {
-                    this.setState({
-                        username: '',
-                        password: '',
-                        cPwd:     '',
-                        banner:   {
-                            type:    'danger',
-                            message: msg.message
-                        }
-                    });
-                });
-            }
-        }).catch(() => {
+        this.apiService.signup(data)
+        .then(data => {
+            this.props.setLoggedIn(data.user);
+            this.props.history.push({
+                pathname: '/'
+            });
+        })
+        .catch(error => {
             this.setState({
                 username: '',
                 password: '',
                 cPwd:     '',
                 banner:   {
                     type:    'danger',
-                    message: 'Something went wrong!'
+                    message: error.message
                 }
             });
         });
