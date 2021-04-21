@@ -1,188 +1,156 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {Translation} from 'react-i18next';
-import _ from 'lodash';
-import Banner from './Banner';
+import React, {useState, useEffect, useContext} from 'react';
+import {useTranslation} from 'react-i18next';
 import APIServices from '../common/services/api-service';
+import PropTypes from 'prop-types';
+import Banner from './Banner';
+import UserContext from './UserContext';
 
-export default class ArticleForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.apiServices = new APIServices();
-        const tags = props.tags.map(tag => {
-            let obj;
-            if (props.article && props.article.tags.includes(tag)) {
-                obj = {name: tag, isChecked: true};
-            } else {
-                obj = {name: tag, isChecked: false};
-            }
-            return obj;
-        });
-        this.state = {
-            title:    props.article ? props.article.title : '',
-            body:     props.article ? props.article.body : '',
-            tags:     tags,
-            newTag:   '',
-            editMode: props.article,
-            banner:   {}
-        };
-    }
+const ArticleForm = ({previousTags, clearEditMode, history, article}) => {
+    const apiServices = new APIServices();
+    const currentUser = useContext(UserContext);
+    const {t} = useTranslation();
+    const [title, setTitle] = useState(article ? article.title : '');
+    const [body, setBody] = useState(article ? article.body : '');
+    const [banner, setBanner] = useState({});
+    const [tags, setTags] = useState([]);
+    const [newTag, setNewTag] = useState('');
 
-    componentDidMount = () => {
-        if (_.isEmpty(this.props.currentUser)) {
-            this.props.history.push({
+    useEffect(() => {
+        if (!currentUser) {
+            history.push({
                 pathname: '/'
             });
         }
-    }
+    }, [currentUser]);
 
-    handleTitleChange = event => {
-        this.setState({
-            title: event.target.value
-        });
-    }
-
-    handleBodyChange = event => {
-        this.setState({
-            body: event.target.value
-        });
-    }
-
-    handleTagSelect = index => {
-        const {tags} = this.state;
-        tags[index].isChecked = !tags[index].isChecked;
-        this.setState({
-            tags: tags
-        });
-    }
-
-    handleAddNewTagChange = event => {
-        this.setState({
-            newTag: event.target.value
-        });
-    }
-
-    handleAddNewTagClick = () => {
-        if (!_.isEmpty(this.state.newTag)) {
-            this.setState(prevState => ({
-                tags:   prevState.tags.concat({name: prevState.newTag, isChecked: true}),
-                newTag: ''
+    useEffect(() => {
+        if (previousTags.length > 0) {
+            setTags(previousTags.map(tag => {
+                let obj;
+                if (article && article.tags.includes(tag)) {
+                    obj = {name: tag, isChecked: true};
+                } else {
+                    obj = {name: tag, isChecked: false};
+                }
+                return obj;
             }));
         }
-    }
+    }, [previousTags]);
 
-    submit = event => {
-        let tags = [];
-        this.state.tags.forEach(tag => {
+    const handleTagSelect = index => {
+        tags[index].isChecked = !tags[index].isChecked;
+        setTags([...tags]);
+    };
+
+    const handleAddNewTagClick = () => {
+        setTags(tags.concat({name: newTag, isChecked: true}));
+        setNewTag('');
+    };
+
+    const submit = event => {
+        let tagsArr = [];
+        tags.forEach(tag => {
             if (tag.isChecked) {
-                tags.push(tag.name);
+                tagsArr.push(tag.name.trim());
             }
             return null;
         });
-        let article = {
-            title:  this.state.title,
-            body:   this.state.body,
-            author: this.props.currentUser,
-            tags
+        let articleObj = {
+            title:  title.trim(),
+            body:   body,
+            author: currentUser,
+            tags:   tagsArr
         };
 
-        if (this.state.editMode) {
-            article.slug = this.props.article.slug;
+        if (article) {
+            articleObj.slug = article.slug;
 
-            this.apiServices.update(article)
+            apiServices.update(articleObj)
             .then(data => {
-                article.slug = data.slug;
-                this.props.clearEditMode(article);
+                articleObj.slug = data.slug;
+                clearEditMode(articleObj);
             })
-            .catch(error => {
-                this.setState({
-                    banner: {
-                        type:    'danger',
-                        message: error.message
-                    }
-                });
-            });
+            .catch(error => setBanner({
+                type:    'danger',
+                message: error.message
+            }));
 
         } else {
-            article.createdAt = new Date();
-            article.author = this.props.currentUser;
+            const date = new Date();
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            articleObj.createdAt = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+            articleObj.author = currentUser;
 
-            this.apiServices.create(article)
+            apiServices.create(articleObj)
             .then(data => {
-                this.props.history.push({
+                history.push({
                     pathname: `/article/${data.slug}`
                 });
             })
-            .catch(error => {
-                this.setState({
-                    banner: {
-                        type:    'danger',
-                        message: error.message
-                    }
-                });
-            });
+            .catch(error => setBanner({
+                type:    'danger',
+                message: error.message
+            }));
         }
 
         event.preventDefault();
-    }
+    };
 
-    render = () => {
-        const translate = (word) => (<Translation>{(t, {i18n}) => t(word)}</Translation>);
-        return (
-            <>
-                <Banner banner={this.state.banner}/>
-                <form style={{marginTop: '50px'}} onSubmit={this.submit}>
-                    <div className="form-group row ">
-                        <label className="col-sm-3 col-form-label">{translate('article.title')}:</label>
-                        <input type="text" className="col-sm-9 form-control" value={this.state.title} onChange={this.handleTitleChange}/>
+    return (
+        <>
+            <Banner banner={banner}/>
+            <form style={{marginTop: '50px'}} onSubmit={submit}>
+                <div className="form-group row ">
+                    <label className="col-sm-3 col-form-label">{t('article.title')}:</label>
+                    <input type="text" className="col-sm-9 form-control" value={title} onChange={e => setTitle(e.target.value)}/>
+                </div>
+                <div className="form-group row">
+                    <label className="col-sm-3 col-form-label">{t('article.body')}:</label>
+                    <textarea
+                        type="text"
+                        rows="5"
+                        className="form-control col-md-9"
+                        value={body}
+                        onChange={e => setBody(e.target.value)}/>
+                </div>
+                <div className="form-group row">
+                    <label className="col-sm-3 col-form-label">{t('article.tags')}:</label>
+                    <div className="form-group">
+                        {tags.length > 0
+                            ? tags.map((tag, key) => (
+                                <div key={key} className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        onChange={() => handleTagSelect(key)}
+                                        checked={tag.isChecked}
+                                        value={tag.name}/>
+                                    <label className="form-check-label">{tag.name}</label>
+                                </div>
+                            ))
+                            : <span> Please add Tag </span>
+                        }
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-3 col-form-label">{translate('article.body')}:</label>
-                        <textarea
-                            type="text"
-                            rows="5"
-                            className="form-control col-md-9"
-                            value={this.state.body}
-                            onChange={this.handleBodyChange}/>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-3 col-form-label">{translate('article.tags')}:</label>
-                        <div className="form-group">
-                            {this.state.tags && this.state.tags.length > 0
-                                ? this.state.tags.map((tag, key) => (
-                                    <div key={key} className="form-check">
-                                        <input
-                                            type="checkbox"
-                                            className="form-check-input"
-                                            onChange={this.handleTagSelect.bind(this, key)}
-                                            checked={tag.isChecked}
-                                            value={tag.name}/>
-                                        <label className="form-check-label">{tag.name}</label>
-                                    </div>
-                                ))
-                                : <span> Please add Tag </span>
-                            }
-                        </div>
-                    </div>
-                    <div className="form-group row offset-md-3">
-                        <input type="text" className="col-sm-3 form-control" value={this.state.newTag} onChange={this.handleAddNewTagChange}/>
-                        <button
-                            type="button"
-                            className="btn btn-link"
-                            onClick={this.handleAddNewTagClick}>
-                            {translate('article.add-new-tag')} +
-                        </button>
-                    </div>
-                    <button type="submit" className="btn btn-primary float-right">{translate('article.submit')}</button>
-                </form>
-            </>
-        );
-    }
-}
+                </div>
+                <div className="form-group row offset-md-3">
+                    <input type="text" className="col-sm-3 form-control" value={newTag} onChange={e => setNewTag(e.target.value.trim())}/>
+                    <button
+                        type="button"
+                        className="btn btn-link"
+                        onClick={() => handleAddNewTagClick()}>
+                        {t('article.add-new-tag')} +
+                    </button>
+                </div>
+                <button type="submit" className="btn btn-primary float-right">{t('article.submit')}</button>
+            </form>
+        </>
+    );
+};
+
+export default ArticleForm;
 
 ArticleForm.propTypes = {
-    tags:          PropTypes.array.isRequired,
-    currentUser:   PropTypes.string,
+    previousTags:  PropTypes.array.isRequired,
     clearEditMode: PropTypes.func,
     history:       PropTypes.shape({
         push: PropTypes.func

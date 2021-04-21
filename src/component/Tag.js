@@ -1,93 +1,43 @@
-import React from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import APIServices from '../common/services/api-service';
 import ArticleThumbnail from './ArticleThumbnail';
 import Banner from './Banner';
+import UserContext from './UserContext';
 
-class Tag extends React.Component {
-    constructor(props) {
-        super(props);
-        this.apiServices = new APIServices();
-        this.tag = '';
-        this.state = {
-            articles: [],
-            banner:   {}
-        };
-    }
+const Tag = ({match}) => {
+    const apiServices = new APIServices();
+    const currentUser = useContext(UserContext);
+    const tag = match.params.tag;
+    const [articles, setArticles] = useState([]);
+    const [banner, setBanner] = useState({});
 
-    componentDidMount = () => {
-        this._isMounted = true;
-        this.tag = this.props.match.params.tag;
-        if (!_.isUndefined(this.tag)) {
-            this.apiServices.articlesByTag(this.tag)
-            .then(data => {
-                if (this._isMounted) {
-                    this.setState({
-                        articles: data,
-                        banner:   {
-                            type:    'info',
-                            message: `Viewing articles by tag: ${this.tag}`
-                        }
-                    });
-                }
-            })
-            .catch(error => {
-                if (this._isMounted) {
-                    this.setState({
-                        banner: {
-                            type:    'danger',
-                            message: error.message
-                        }
-                    });
-                }
+    useEffect(() => {
+        apiServices.articlesByTag(tag)
+        .then(data => {
+            setArticles(data);
+            setBanner({
+                type:    'info',
+                message: `Viewing articles by tag: ${tag}`
             });
-        }
-    }
+        })
+        .catch(error => setBanner({
+            type:    'danger',
+            message: error.message
+        }));
+    }, [tag]);
 
-    componentDidUpdate = () => {
-        if (this.tag !== this.props.match.params.tag) {
-            this.tag = this.props.match.params.tag;
-            if (!_.isUndefined(this.tag)) {
-                this.apiServices.articlesByTag(this.tag)
-                .then(data => {
-                    if (this._isMounted) {
-                        this.setState({
-                            articles: data,
-                            banner:   {
-                                type:    'info',
-                                message: `Viewing articles by tag: ${this.tag}`
-                            }
-                        });
-                    }
-                })
-                .catch(error => {
-                    if (this._isMounted) {
-                        this.setState({
-                            banner: {
-                                type:    'danger',
-                                message: error.message
-                            }
-                        });
-                    }
-                });
-            }
-        }
-    }
-
-    componentWillUnmount = () => {
-        this._isMounted = false;
-    }
-
-    render = () => (
+    return (
         <>
-            <Banner banner={this.state.banner}/>
-            {this.state.articles && this.state.articles.map((article, key) =>
-                <ArticleThumbnail key={key} article={article} currentUser={this.props.currentUser} thumbnail={false}></ArticleThumbnail>
+            <Banner banner={banner}/>
+            {articles.map((article, key) =>
+                <ArticleThumbnail key={key} article={article} currentUser={currentUser} thumbnail={true}></ArticleThumbnail>
             )}
         </>
     );
-}
+};
+
+export default Tag;
 
 Tag.propTypes = {
     match: PropTypes.shape({
@@ -97,5 +47,3 @@ Tag.propTypes = {
     }).isRequired,
     currentUser: PropTypes.string
 };
-
-export default Tag;

@@ -90,6 +90,7 @@ export default class NavBar extends React.Component {
             domElements[i].className = 'nav-link';
         }
         this.props.setNavbar(navbar);
+        document.getElementById('navbarTogglerDemo03').classList.remove('show');
     };
 
     clearActive = id => {
@@ -134,6 +135,7 @@ export default class NavBar extends React.Component {
         return (
             <div>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                    <a className="navbar-brand" href="/">Aditya&rsquo;s Blogs</a>
                     <button
                         className="navbar-toggler"
                         onClick={this.showCollapsedMenu}
@@ -180,6 +182,8 @@ export default class NavBar extends React.Component {
 }
 
 NavBar.propTypes = {
-    loggedin:      PropTypes.bool,
-    clearLoggedIn: PropTypes.func
+    loggedin:      PropTypes.string,
+    clearLoggedIn: PropTypes.func,
+    navbar:        PropTypes.string,
+    setNavbar:     PropTypes.func
 };

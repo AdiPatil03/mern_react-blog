@@ -22,8 +22,8 @@ export default class Login extends React.Component {
         };
 
         this.apiService.login(data)
-        .then(data => {
-            this.props.setLoggedIn(data.user);
+        .then(resp => {
+            this.props.setLoggedIn(resp.user);
             this.props.history.push({
                 pathname: '/'
             });

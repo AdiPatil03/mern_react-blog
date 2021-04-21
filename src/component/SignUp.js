@@ -25,8 +25,8 @@ export default class SignUp extends React.Component {
         };
 
         this.apiService.signup(data)
-        .then(data => {
-            this.props.setLoggedIn(data.user);
+        .then(resp => {
+            this.props.setLoggedIn(resp.user);
             this.props.history.push({
                 pathname: '/'
             });
