@@ -4,7 +4,7 @@
         "guest": "Guest",
         "tags": "Tags",
         "archives": "Archives",
-        "elsewhere": "Elsewhere"
+        "about-me": "About Me"
     },
     "login": {
         "user-name": "Username",
@@ -22,11 +22,28 @@
         "password":  "Password",
         "confirm-password": "Confirm Password"
     },
-    "nav-bar": {
+    "navigation": {
         "log-in":   "Log In",
         "home":     "Home",
         "sign-up":  "Sign Up",
-        "new-post": "New Article",
+        "create-article": "New Article",
         "log-out":  "Log Out"
+    },
+    "error": {
+        "password": "Password must be of 6 to 16 aplha-numeric characters with atleast 1 special characters.",
+        "both-password-match": "Both passwords do not match.",
+        "username": "Only alpha-numeric username is allowed.",
+        "fill-form": "Please fill in the form.",
+        "db-connection": "Error connecting to db.",
+        "invalid-credentials": "Invalid credentials.",
+        "user-exists": "This user already exists.",
+        "update-failed": "There was an error while updating the article.",
+        "no-article-written": "No article written yet. Please Log In to write your first article.",
+        "article-not-found": "Article not found."
+    },
+    "info": {
+        "login": "Please login with your credentails.",
+        "archive-view": "Viewing articles created in",
+        "tag-view": "Viewing articles by tag"
     }
 }

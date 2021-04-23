@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default class APIServices {
 
     constructor() {
@@ -15,7 +14,7 @@ export default class APIServices {
                 }
             }).catch(error => reject({message: error.message}));
         });
-	}
+    }
 
     find(slug) {
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -62,8 +61,8 @@ export default class APIServices {
         });
     }
 
-	create(article) {
-		return new Promise((resolve, reject) => {
+    create(article) {
+        return new Promise((resolve, reject) => {
             fetch('/api/new-article', {
                 method:  'post',
                 body:    JSON.stringify(article),
@@ -77,8 +76,8 @@ export default class APIServices {
                     response.json.then(error => reject({message: error.message}));
                 }
             }).catch(error => reject({message: error.message}));
-		});	
-	}
+        });
+    }
 
     update(article) {
         return new Promise((resolve, reject) => {
@@ -98,8 +97,8 @@ export default class APIServices {
         });
     }
 
-	login(data) {
-		return new Promise((resolve, reject) => {
+    login(data) {
+        return new Promise((resolve, reject) => {
             fetch('/api/login', {
                 method:  'post',
                 body:    JSON.stringify(data),
@@ -108,16 +107,16 @@ export default class APIServices {
                 },
             }).then((response) => {
                 if (response.status === 200) {
-                    response.json().then(data => resolve({...data}));
+                    response.json().then(resp => resolve({...resp}));
                 } else {
                     response.json().then(error => reject({message: error.message}));
                 }
             }).catch(error => reject({message: error.message}));
-		});
-	}
+        });
+    }
 
-	signup(data) {
-		return new Promise((resolve, reject) => {
+    signup(data) {
+        return new Promise((resolve, reject) => {
             fetch('/api/signup', {
                 method:  'post',
                 headers: {
@@ -126,11 +125,11 @@ export default class APIServices {
                 body: JSON.stringify(data)
             }).then(response => {
                 if (response.status === 200) {
-                    response.json().then(data => resolve({...data}));
+                    response.json().then(resp => resolve({...resp}));
                 } else {
                     response.json().then(error => reject({message: error.message}));
                 }
             }).catch(error => reject({message: error.message}));
-		});		
-	}
+        });
+    }
 }

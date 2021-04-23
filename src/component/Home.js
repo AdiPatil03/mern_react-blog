@@ -1,27 +1,12 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import APIServices from '../common/services/api-service';
 import ArticleThumbnail from './ArticleThumbnail';
-import Banner from './Banner';
-import UserContext from './UserContext';
 
-const Home = () => {
-    const apiServices = new APIServices();
-    const currentUser = useContext(UserContext);
-    const [articles, setArticles] = useState([]);
-    const [banner, setBanner] = useState({});
-
-    useEffect(() => {
-        apiServices.allArticlesPreviews()
-        .then(response => setArticles(response.previews))
-        .catch(error => setBanner({type: 'danger', message: error.message}));
-    }, []);
-
+const Home = ({articles, user}) => {
     return (
         <>
-            <Banner banner={banner}/>
-            {articles.map((article, key) =>
-                <ArticleThumbnail key={key} article={article} thumbnail={true} currentUser={currentUser}></ArticleThumbnail>
+            {articles && articles.map((article, key) =>
+                <ArticleThumbnail key={key} article={article} thumbnail={true} user={user}></ArticleThumbnail>
             )}
         </>
     );
@@ -30,5 +15,6 @@ const Home = () => {
 export default Home;
 
 Home.propTypes = {
-    setTagsAndArchives: PropTypes.func
+    user:     PropTypes.string,
+    articles: PropTypes.array
 };

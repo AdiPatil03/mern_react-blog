@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
 
-const ArticleThumbnail = ({thumbnail, article, currentUser, setEdit}) => {
+const ArticleThumbnail = ({thumbnail, article, user, setEdit}) => {
     if (_.isUndefined(article.title)) {
         return null;
     }
@@ -21,7 +21,7 @@ const ArticleThumbnail = ({thumbnail, article, currentUser, setEdit}) => {
             )}</p>
 
             <p className="text-justify">{article.body}</p>
-            {!thumbnail && currentUser === article.author
+            {!thumbnail && user === article.author
                 ? <button onClick={setEdit} className="btn btn-link float-right">Edit Article &raquo;</button>
                 : ''}
         </>
@@ -29,10 +29,10 @@ const ArticleThumbnail = ({thumbnail, article, currentUser, setEdit}) => {
 };
 
 ArticleThumbnail.propTypes = {
-    currentUser: PropTypes.string,
-    setEdit:     PropTypes.func,
-    thumbnail:   PropTypes.bool,
-    article:     PropTypes.shape({
+    user:      PropTypes.string,
+    setEdit:   PropTypes.func,
+    thumbnail: PropTypes.bool,
+    article:   PropTypes.shape({
         slug:      PropTypes.string,
         title:     PropTypes.string,
         createdAt: PropTypes.string,

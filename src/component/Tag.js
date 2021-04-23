@@ -1,16 +1,16 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
+import {useParams} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import APIServices from '../common/services/api-service';
 import ArticleThumbnail from './ArticleThumbnail';
-import Banner from './Banner';
-import UserContext from './UserContext';
 
-const Tag = ({match}) => {
+const Tag = ({user, setBanner}) => {
     const apiServices = new APIServices();
-    const currentUser = useContext(UserContext);
-    const tag = match.params.tag;
+    const {t} = useTranslation();
+    const {tag} = useParams();
     const [articles, setArticles] = useState([]);
-    const [banner, setBanner] = useState({});
 
     useEffect(() => {
         apiServices.articlesByTag(tag)
@@ -18,32 +18,35 @@ const Tag = ({match}) => {
             setArticles(data);
             setBanner({
                 type:    'info',
-                message: `Viewing articles by tag: ${tag}`
+                message: `${t('info.tag-view')}: ${tag}`
             });
         })
         .catch(error => setBanner({
             type:    'danger',
-            message: error.message
+            message: t(`error.${error.message}`)
         }));
     }, [tag]);
 
     return (
         <>
-            <Banner banner={banner}/>
             {articles.map((article, key) =>
-                <ArticleThumbnail key={key} article={article} currentUser={currentUser} thumbnail={true}></ArticleThumbnail>
+                <ArticleThumbnail key={key} article={article} user={user} thumbnail={true}></ArticleThumbnail>
             )}
         </>
     );
 };
 
-export default Tag;
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+const mapDispatchToProps = dispatch => ({
+    setBanner: item => dispatch({type: 'SET_BANNER', item})
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tag);
 
 Tag.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            tag: PropTypes.string
-        }).isRequired,
-    }).isRequired,
-    currentUser: PropTypes.string
+    user:      PropTypes.string,
+    setBanner: PropTypes.func
 };

@@ -1,16 +1,16 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
+import {useParams} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 import PropTypes from 'prop-types';
 import APIServices from '../common/services/api-service';
 import ArticleThumbnail from './ArticleThumbnail';
-import Banner from './Banner';
-import UserContext from './UserContext';
 
-const Archive = ({match}) => {
+const Archive = ({user, setBanner}) => {
     const apiServices = new APIServices();
-    const currentUser = useContext(UserContext);
-    const archive = match.params.archive;
+    const {t} = useTranslation();
+    const {archive} = useParams();
     const [articles, setArticles] = useState([]);
-    const [banner, setBanner] = useState({});
 
     useEffect(() => {
         apiServices.articlesByArchive(archive)
@@ -18,31 +18,35 @@ const Archive = ({match}) => {
             setArticles(data);
             setBanner({
                 type:    'info',
-                message: `Viewing articles created in: ${archive}`
+                message: `${t('info.archive-view')}: ${archive}`
             });
         })
         .catch(error => setBanner({
             type:    'danger',
-            message: error.message
+            message: t(`error.${error.message}`)
         }));
     }, [archive]);
 
     return (
         <>
-            <Banner banner={banner}/>
             {articles.map((article, key) =>
-                <ArticleThumbnail key={key} article={article} currentUser={currentUser} thumbnail={true}></ArticleThumbnail>
+                <ArticleThumbnail key={key} article={article} user={user} thumbnail={true}></ArticleThumbnail>
             )}
         </>
     );
 };
 
-export default Archive;
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+const mapDispatchToProps = dispatch => ({
+    setBanner: item => dispatch({type: 'SET_BANNER', item})
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Archive);
 
 Archive.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            archive: PropTypes.string
-        }).isRequired
-    }).isRequired
+    user:      PropTypes.string,
+    setBanner: PropTypes.func
 };

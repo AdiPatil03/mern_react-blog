@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
+import {useTranslation} from 'react-i18next';
+import PropTypes from 'prop-types';
 import {
     BrowserRouter as Router,
     Route,
     Switch
 } from 'react-router-dom';
-import _ from 'lodash';
 
-import NavBar from './NavBar';
+import Navigation from './Navigation';
 import APIServices from '../common/services/api-service';
 import Home from './Home';
 import Login from './Login';
@@ -16,125 +18,89 @@ import Article from './Article';
 import Tag from './Tag';
 import Archive from './Archive';
 import Sidebar from './Sidebar';
+import Banner from './Banner';
+
 import UserContext from './UserContext';
 
-export default class LandingPage extends React.Component {
+const LandingPage = ({tags, archives, user, banner, addArchives, addTags, setBanner}) => {
+    const apiServices = new APIServices();
+    const {t} = useTranslation();
+    const [articles, setArticles] = useState([]);
+    const location = window.location.pathname;
 
-    constructor() {
-        super();
-        this.apiServices = new APIServices();
-        this.state = {
-            tags:        [],
-            currentUser: '',
-            navbar:      'home',
-        };
-    }
+    useEffect(() => {
+        apiServices.allArticlesPreviews()
+        .then(response => {
+            setArticles(response.previews);
+            addArchives(response.archives);
+            addTags(response.tags);
+        }).catch(error => setBanner({
+            type:    'danger',
+            message: t(`error.${error.message}`)
+        }));
+    }, [location]);
 
-    componentDidMount = () => {
-        this._isMounted = true;
-        let currentUser = sessionStorage.getItem('username');
-        if (!_.isNull(currentUser)) {
-            this.setState({
-                currentUser
-            });
-        }
-        this.setNavbarOnLoad();
-    }
+    const homeComponent = () => (<Home articles={articles} user={user}/>);
 
-    componentWillUnmount = () => {
-        this._isMounted = false;
-    }
+    return (
+        <>
+            <Router>
+                <UserContext.Provider value={user}>
+                    <div className="container">
+                        <Navigation/>
+                    </div>
 
-    setLoggedIn = user => {
-        sessionStorage.setItem('username', user);
-        this.setState({
-            currentUser: user,
-            navbar:      'home'
-        });
-    }
-
-    setTags = tags => {
-        this.setState({
-            tags
-        });
-    }
-
-    clearLoggedIn = () => {
-        sessionStorage.removeItem('username');
-        this.setState({
-            currentUser: ''
-        });
-    }
-
-    setNavbar = navbar => {
-        this.setState({
-            navbar
-        });
-    }
-
-    setNavbarOnLoad = () => {
-        let pathname = window.location.pathname;
-        let index = pathname.lastIndexOf('/');
-        let nav = pathname.substr(1);
-
-        if (index > 0) {
-            nav = pathname.substr(1, index - 1);
-        }
-
-        if (_.isEmpty(nav) || nav === 'article') {
-            nav = 'home';
-        }
-        this.setState({
-            navbar: nav
-        });
-    }
-
-    render = () => {
-        const loginComponent = (props) => (<Login setLoggedIn={this.setLoggedIn} {...props}/>);
-        const signupComponent = (props) => (<SignUp setLoggedIn={this.setLoggedIn} {...props}/>);
-        const articleFormComponent = (props) => (<ArticleForm previousTags={this.state.tags} {...props}/>);
-        const articleComponent = (props) => (<Article tags={this.state.tags} {...props}/>);
-
-        return (
-            <>
-                <Router>
-                    <UserContext.Provider value={this.state.currentUser}>
-                        <div className="container">
-                            <NavBar
-                                loggedin={this.state.currentUser}
-                                clearLoggedIn={this.clearLoggedIn}
-                                navbar={this.state.navbar}
-                                setNavbar={this.setNavbar}/>
-                        </div>
-
-                        <main role="main" className="container">
-                            <div className="row">
-                                <div className="col-md-8 blog-main">
-                                    <div className="blog-post">
-                                        <Switch>
-                                            <Route path="/" component={Home} exact/>
-                                            <Route path="/login" render={loginComponent}/>
-                                            <Route path="/article/:slug" render={articleComponent}/>
-                                            <Route path="/tags/:tag" component={Tag}/>
-                                            <Route path="/archives/:archive" component={Archive}/>
-                                            <Route path="/create-article" render={articleFormComponent}/>
-                                            <Route path="/signup" render={signupComponent}/>
-                                        </Switch>
-                                    </div>
+                    <main role="main" className="container">
+                        <div className="row">
+                            <div className="col-md-8 blog-main">
+                                <div className="blog-post">
+                                    <Banner banner={banner}/>
+                                    <Switch>
+                                        <Route path="/" render={homeComponent} exact/>
+                                        <Route path="/login" component={Login}/>
+                                        <Route path="/article/:slug" component={Article}/>
+                                        <Route path="/tags/:tag" component={Tag}/>
+                                        <Route path="/archives/:archive" component={Archive}/>
+                                        <Route path="/create-article" component={ArticleForm}/>
+                                        <Route path="/signup" component={SignUp}/>
+                                    </Switch>
                                 </div>
-
-                                <Sidebar setHomeTags={this.setTags}/>
                             </div>
-                        </main>
 
-                        <footer className="blog-footer">
-                            <p>
-                                <a href="#">Back to top</a>
-                            </p>
-                        </footer>
-                    </UserContext.Provider>
-                </Router>
-            </>
-        );
-    }
-}
+                            <Sidebar user={user} tags={tags} archives={archives}/>
+                        </div>
+                    </main>
+
+                    <footer className="blog-footer">
+                        <p>
+                            <a href="#">Back to top</a>
+                        </p>
+                    </footer>
+                </UserContext.Provider>
+            </Router>
+        </>
+    );
+};
+
+const mapStateToProps = state => ({...state});
+
+const mapDispatchToProps = dispatch => ({
+    addArchives: item => dispatch({type: 'ADD_ARCHIVES', item}),
+    addTags:     item => dispatch({type: 'ADD_TAGS', item}),
+    setBanner:   item => dispatch({type: 'SET_BANNER', item})
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
+
+LandingPage.propTypes = {
+    archives: PropTypes.array,
+    tags:     PropTypes.array,
+    user:     PropTypes.string,
+    banner:   PropTypes.shape({
+        type:    PropTypes.string,
+        message: PropTypes.string
+    }),
+    addArchives: PropTypes.func,
+    addTags:     PropTypes.func,
+    setBanner:   PropTypes.func
+};

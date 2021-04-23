@@ -1,41 +1,40 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
+import {useTranslation} from 'react-i18next';
+import {useParams} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import APIServices from '../common/services/api-service';
 import ArticleThumbnail from './ArticleThumbnail';
 import ArticleForm from './ArticleForm';
-import Banner from './Banner';
-import UserContext from './UserContext';
 
-const Article = ({match, tags, history}) => {
+const Article = ({user, setBanner}) => {
     const apiServices = new APIServices();
-    const currentUser = useContext(UserContext);
-    const slug = match.params.slug;
+    const {t} = useTranslation();
+    const {slug} = useParams();
     const [editMode, setEditMode] = useState(false);
     const [article, setArticle] = useState({});
-    const [banner, setBanner] = useState({});
 
     useEffect(() => {
         apiServices.find(slug)
         .then(data => setArticle(data))
         .catch(error => setBanner({
             type:    'danger',
-            message: error.message
+            message: t(`error.${error.message}`)
         }));
     }, [slug]);
 
-    const clearEditMode = newArticle => {
+    const clearEditMode = articleObj => {
         setEditMode(false);
-        setArticle(newArticle);
+        setArticle(articleObj);
     };
 
     return (
         <>
-            <Banner banner={banner} />
             {editMode
-                ? <ArticleForm article={article} previousTags={tags} clearEditMode={clearEditMode} history={history}/>
+                ? <ArticleForm article={article} clearEditMode={clearEditMode}/>
                 : <ArticleThumbnail
                     article={article}
-                    currentUser={currentUser}
+                    user={user}
                     setEdit={() => setEditMode(true)}
                     thumbnail={false}/>
             }
@@ -43,16 +42,17 @@ const Article = ({match, tags, history}) => {
     );
 };
 
-export default Article;
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+const mapDispatchToProps = dispatch => ({
+    setBanner: item => dispatch({type: 'SET_BANNER', item})
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Article);
 
 Article.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            slug: PropTypes.string
-        }).isRequired
-    }).isRequired,
-    history: PropTypes.shape({
-        push: PropTypes.func
-    }).isRequired,
-    tags: PropTypes.array.isRequired
+    user:      PropTypes.string,
+    setBanner: PropTypes.func
 };

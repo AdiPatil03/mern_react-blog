@@ -1,105 +1,80 @@
-import React from 'react';
+import React, {useState} from 'react';
+import {useHistory} from 'react-router-dom';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {Translation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import APIService from '../common/services/api-service';
-import Banner from './Banner';
 
-export default class Login extends React.Component {
-    constructor(props) {
-        super(props);
-        this.apiService = new APIService();
-        this.state = {
-            username: '',
-            password: '',
-            banner:   {}
-        };
-    }
+const Login = ({setUser, setBanner}) => {
+    const apiService = new APIService();
+    const history = useHistory();
+    const {t} = useTranslation();
+    const [username, setusername] = useState('');
+    const [password, setPassword] = useState('');
 
-    submit = event => {
-        const data = {
-            username: this.state.username,
-            password: this.state.password
-        };
+    const submit = event => {
+        const data = {username, password};
 
-        this.apiService.login(data)
+        apiService.login(data)
         .then(resp => {
-            this.props.setLoggedIn(resp.user);
-            this.props.history.push({
+            setUser(resp.user);
+            history.push({
                 pathname: '/'
             });
         })
         .catch(error => {
-            this.setState({
-                username: '',
-                password: '',
-                banner:   {
-                    type:    'danger',
-                    message: error.message
-                }
+            setusername('');
+            setPassword('');
+            setBanner({
+                type:    'danger',
+                message: t(`error.${error.message}`)
             });
         });
 
         event.preventDefault();
-    }
+    };
 
-    handleUserNameChange = event => {
-        this.setState({
-            username: event.target.value
-        });
-    }
+    return (
+        <>
+            <form style={{marginTop: '50px'}} className="offset-md-2 col-md-9" onSubmit={e => submit(e)}>
+                <div className="form-group row">
+                    <label className="col-sm-4 col-form-label">{t('login.user-name')}:</label>
+                    <div className="col-sm-6">
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={username}
+                            onChange={e => setusername(e.target.value)}/>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <label className="col-sm-4 col-form-label">{t('login.password')}:</label>
+                    <div className="col-sm-6">
+                        <input
+                            type="password"
+                            className="form-control"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}/>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <div className="col-sm-10">
+                        <button type="submit" className="btn btn-primary float-right">{t('navigation.log-in')}</button>
+                    </div>
+                </div>
+            </form>
+        </>
+    );
+};
 
-    handlePasswordChange = event => {
-        this.setState({
-            password: event.target.value
-        });
-    }
+const mapDispatchToProps = dispatch => ({
+    setUser:   item => dispatch({type: 'SET_USER', item}),
+    setBanner: item => dispatch({type: 'SET_BANNER', item})
+});
 
-    render = () => {
-        const translate = (word) => (
-            <Translation>
-                {
-                    (t, {i18n}) => t(word)
-                }
-            </Translation>
-        );
-        return (
-            <>
-                <Banner banner={this.state.banner}/>
-                <form style={{marginTop: '50px'}} className="offset-md-2 col-md-9" onSubmit={this.submit}>
-                    <div className="form-group row">
-                        <label className="col-sm-4 col-form-label">{translate('login.user-name')}:</label>
-                        <div className="col-sm-6">
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={this.state.username}
-                                onChange={this.handleUserNameChange}/>
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-4 col-form-label">{translate('login.password')}:</label>
-                        <div className="col-sm-6">
-                            <input
-                                type="password"
-                                className="form-control"
-                                value={this.state.password}
-                                onChange={this.handlePasswordChange}/>
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <div className="col-sm-10">
-                            <button type="submit" className="btn btn-primary float-right">{translate('nav-bar.log-in')}</button>
-                        </div>
-                    </div>
-                </form>
-            </>
-        );
-    }
-}
+export default connect(null, mapDispatchToProps)(Login);
 
 Login.propTypes = {
-    setLoggedIn: PropTypes.func,
-    history:     PropTypes.shape({
-        push: PropTypes.func
-    }).isRequired
+    setUser:   PropTypes.func,
+    setBanner: PropTypes.func
 };
