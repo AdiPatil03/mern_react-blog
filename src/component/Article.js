@@ -1,89 +1,58 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
+import {useTranslation} from 'react-i18next';
+import {useParams} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import APIServices from '../common/services/api-service';
 import ArticleThumbnail from './ArticleThumbnail';
 import ArticleForm from './ArticleForm';
-import Banner from './Banner';
 
-export default class Article extends React.Component {
-    constructor(props) {
-        super(props);
-        this.apiServices = new APIServices();
-        this.state = {
-            editMode: false,
-            article:  {},
-            banner:   {}
-        };
-    }
+const Article = ({user, setBanner}) => {
+    const apiServices = new APIServices();
+    const {t} = useTranslation();
+    const {slug} = useParams();
+    const [editMode, setEditMode] = useState(false);
+    const [article, setArticle] = useState({});
 
-    componentDidMount = () => {
-        this._isMounted = true;
-        const slug = this.props.match.params.slug;
+    useEffect(() => {
+        apiServices.find(slug)
+        .then(data => setArticle(data))
+        .catch(error => setBanner({
+            type:    'danger',
+            message: t(`error.${error.message}`)
+        }));
+    }, [slug]);
 
-        if (!_.isUndefined(slug)) {
+    const clearEditMode = articleObj => {
+        setEditMode(false);
+        setArticle(articleObj);
+    };
 
-            this.apiServices.find(slug)
-            .then(data => {
-                if (this._isMounted) {
-                    this.setState({
-                        article: data
-                    });
-                }
-            })
-            .catch(error => {
-                if (this._isMounted) {
-                    this.setState({
-                        banner: {
-                            type:    'danger',
-                            message: error.message
-                        }
-                    });
-                }
-            });
-        }
-    }
-
-    setEditMode = event => {
-        this.setState({
-            editMode: true
-        });
-        event.preventDefault();
-    }
-
-    clearEditMode = article => {
-        this.setState({
-            editMode: false,
-            article:  article
-        });
-    }
-
-    componentWillUnmount = () => {
-        this._isMounted = false;
-    }
-
-    render = () => (
+    return (
         <>
-            <Banner banner={this.state.banner} />
-            {this.state.editMode
-                ? <ArticleForm article={this.state.article} tags={this.props.tags} clearEditMode={this.clearEditMode} {...this.props}/>
+            {editMode
+                ? <ArticleForm article={article} clearEditMode={clearEditMode}/>
                 : <ArticleThumbnail
-                    article={this.state.article}
-                    currentUser={this.props.currentUser}
-                    setEdit={this.setEditMode}
-                    {...this.props}
+                    article={article}
+                    user={user}
+                    setEdit={() => setEditMode(true)}
                     thumbnail={false}/>
             }
         </>
     );
-}
+};
+
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+const mapDispatchToProps = dispatch => ({
+    setBanner: item => dispatch({type: 'SET_BANNER', item})
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Article);
 
 Article.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            slug: PropTypes.string
-        }).isRequired
-    }).isRequired,
-    tags:        PropTypes.array.isRequired,
-    currentUser: PropTypes.string
+    user:      PropTypes.string,
+    setBanner: PropTypes.func
 };

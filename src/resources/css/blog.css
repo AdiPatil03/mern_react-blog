@@ -107,7 +107,7 @@
    */
   .blog-post {
     margin-bottom: 4rem;
-    min-height: 570px;
+    min-height: 750px;
   }
   .blog-post-title {
     margin-bottom: .25rem;
@@ -144,4 +144,10 @@
   }
   .nav-link.active{
     font-weight: bold;
+  }
+
+  @media (max-width: 750px) {
+    .blog-sidebar {
+        display: none;
+    }
   }

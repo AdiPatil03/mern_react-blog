@@ -1,99 +1,52 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {useParams} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import APIServices from '../common/services/api-service';
 import ArticleThumbnail from './ArticleThumbnail';
-import Banner from './Banner';
 
-export default class Archive extends React.Component {
-    constructor(props) {
-        super(props);
-        this.apiServices = new APIServices();
-        this.archive = '';
-        this.state = {
-            articles: [],
-            banner:   {}
-        };
-    }
+const Archive = ({user, setBanner}) => {
+    const apiServices = new APIServices();
+    const {t} = useTranslation();
+    const {archive} = useParams();
+    const [articles, setArticles] = useState([]);
 
-    componentDidMount = () => {
-        this._isMounted = true;
-        this.archive = this.props.match.params.archive;
-        if (!_.isUndefined(this.archive)) {
-            this.apiServices.articlesByArchive(this.archive)
-            .then(data => {
-                if (this._isMounted) {
-                    this.setState({
-                        articles: data,
-                        banner:   {
-                            type:    'info',
-                            message: `Viewing articles created in: ${this.archive}`
-                        }
-                    });
-                }
-            })
-            .catch(error => {
-                if (this._isMounted) {
-                    this.setState({
-                        banner: {
-                            type:    'danger',
-                            message: error.message
-                        }
-                    });
-                }
+    useEffect(() => {
+        apiServices.articlesByArchive(archive)
+        .then(data => {
+            setArticles(data);
+            setBanner({
+                type:    'info',
+                message: `${t('info.archive-view')}: ${archive}`
             });
-        }
-    }
+        })
+        .catch(error => setBanner({
+            type:    'danger',
+            message: t(`error.${error.message}`)
+        }));
+    }, [archive]);
 
-    componentDidUpdate = () => {
-        if (this.archive !== this.props.match.params.archive) {
-            this.archive = this.props.match.params.archive;
-            if (!_.isUndefined(this.archive)) {
-                this.apiServices.articlesByArchive(this.archive)
-                .then(data => {
-                    if (this._isMounted) {
-                        this.setState({
-                            articles: data,
-                            banner:   {
-                                type:    'info',
-                                message: `Viewing articles created in: ${this.archive}`
-                            }
-                        });
-                    }
-                })
-                .catch(error => {
-                    if (this._isMounted) {
-                        this.setState({
-                            banner: {
-                                type:    'danger',
-                                message: error.message
-                            }
-                        });
-                    }
-                });
-            }
-        }
-    }
-
-    componentWillUnmount = () => {
-        this._isMounted = false;
-    }
-
-    render = () => (
+    return (
         <>
-            <Banner banner={this.state.banner}/>
-            {this.state.articles && this.state.articles.map((article, key) =>
-                <ArticleThumbnail key={key} article={article} currentUser={this.props.currentUser} thumbnail={false}></ArticleThumbnail>
+            {articles.map((article, key) =>
+                <ArticleThumbnail key={key} article={article} user={user} thumbnail={true}></ArticleThumbnail>
             )}
         </>
     );
-}
+};
+
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+const mapDispatchToProps = dispatch => ({
+    setBanner: item => dispatch({type: 'SET_BANNER', item})
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Archive);
 
 Archive.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            archive: PropTypes.string
-        }).isRequired
-    }).isRequired,
-    currentUser: PropTypes.string
+    user:      PropTypes.string,
+    setBanner: PropTypes.func
 };

@@ -1,165 +1,155 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
+import {useHistory} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
 import PropTypes from 'prop-types';
-import {Translation} from 'react-i18next';
+import _ from 'lodash';
 import APIService from '../common/services/api-service';
-import Banner from './Banner';
-import Regexpattern from '../common/Regexpattern';
+import {usernameRegex, passwordRegex} from '../common/Regexpattern';
 
-export default class SignUp extends React.Component {
-    constructor(props) {
-        super(props);
-        this.apiService = new APIService();
-        this.regex = Regexpattern();
-        this.state = {
-            username: '',
-            password: '',
-            cPwd:     '',
-            banner:   {}
-        };
-    }
+const SignUp = ({banner, setBanner}) => {
+    const history = useHistory();
+    const {t} = useTranslation();
+    const apiService = new APIService();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [cPwd, setCPwd] = useState('');
 
-    submit = (event) => {
-        const data = {
-            username: this.state.username,
-            password: this.state.password
-        };
-
-        this.apiService.signup(data)
-        .then(data => {
-            this.props.setLoggedIn(data.user);
-            this.props.history.push({
-                pathname: '/'
-            });
-        })
-        .catch(error => {
-            this.setState({
-                username: '',
-                password: '',
-                cPwd:     '',
-                banner:   {
+    useEffect(() => {
+        if (username !== '') {
+            if (usernameRegex.test(username)) {
+                setBanner({});
+            } else {
+                setBanner({
                     type:    'danger',
-                    message: error.message
-                }
+                    message: t('error.username')
+                });
+            }
+        }
+    }, [username]);
+
+    useEffect(() => {
+        if (password !== '') {
+            if (passwordRegex.test(password)) {
+                setBanner({});
+            } else {
+                setBanner({
+                    type:    'danger',
+                    message: t('error.password')
+                });
+            }
+        }
+    }, [password]);
+
+    useEffect(() => {
+        if (cPwd !== '') {
+            if (password !== cPwd) {
+                setBanner({
+                    type:    'danger',
+                    message: t('error.both-password-match')
+                });
+            } else {
+                setBanner({});
+            }
+        }
+    }, [cPwd]);
+
+    const submit = event => {
+        const data = {username, password};
+
+        if (!_.isEmpty(username) && !_.isEmpty(password)) {
+            apiService.signup(data)
+            .then(() => {
+                setUsername('');
+                setPassword('');
+                setCPwd('');
+                setBanner({
+                    type:    'info',
+                    message: t('info.login')
+                });
+                setTimeout(() =>
+                    history.push({
+                        pathname: '/login'
+                    }), 2000);
+            })
+            .catch(error => {
+                setUsername('');
+                setPassword('');
+                setCPwd('');
+                setBanner({
+                    type:    'danger',
+                    message: t(`error.${error.message}`)
+                });
             });
-        });
+        } else {
+            setBanner({
+                type:    'danger',
+                message: t('error.fill-form')
+            });
+        }
 
         event.preventDefault();
-    }
+    };
 
-    handleUserNameChange = (event) => {
-        let value = event.target.value;
-        if (this.regex.usernameRegex.test(value)) {
-            this.setState({
-                username: value,
-                banner:   {}
-            });
-        } else {
-            this.setState({
-                banner: {
-                    type:    'danger',
-                    message: 'Only alpha-numeric username is allowed!'
-                }
-            });
-        }
-    }
+    return (
+        <>
+            <form style={{marginTop: '50px'}} className="offset-md-2 col-md-9" onSubmit={e => submit(e)}>
+                <div className="form-group row">
+                    <label className="col-sm-4 col-form-label">{t('signup.user-name')}:</label>
+                    <div className="col-sm-6">
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}/>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <label className="col-sm-4 col-form-label">{t('signup.password')}:</label>
+                    <div className="col-sm-6">
+                        <input
+                            type="password"
+                            className="form-control"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}/>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <label className="col-sm-4 col-form-label">{t('signup.confirm-password')}:</label>
+                    <div className="col-sm-6">
+                        <input
+                            type="password"
+                            className="form-control"
+                            value={cPwd}
+                            onChange={e => setCPwd(e.target.value)}/>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <div className="col-sm-10">
+                        <button
+                            type="submit"
+                            className="btn btn-primary float-right"
+                            disabled={banner.type}>
+                            {t('navigation.sign-up')}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </>
+    );
+};
 
-    handlePasswordChange = (event) => {
-        let pwd = event.target.value;
-        if (this.state.cPwd.length > 0) {
-            this.setState({
-                cPwd: ''
-            });
-        }
-        if (this.regex.passwordRegex.test(pwd)) {
-            this.setState({
-                banner:   {},
-                cPwd:     '',
-                password: pwd
-            });
-        } else {
-            this.setState({
-                banner: {
-                    type:    'danger',
-                    message: 'Password must have atleast 1 special character with 6 to 16 charactes in length'
-                },
-                password: pwd
-            });
-        }
-    }
+const mapStateToProps = state => ({
+    banner: state.banner
+});
 
-    handleCPWDChange = (event) => {
-        let cPwd = event.target.value;
-        if (this.state.password !== cPwd) {
-            this.setState({
-                banner: {
-                    type:    'danger',
-                    message: 'Both passwords do not match'
-                },
-                cPwd
-            });
-        } else {
-            this.setState({
-                banner: {},
-                cPwd
-            });
-        }
-    }
+const mapDispatchToProps = dispatch => ({
+    setBanner: item => dispatch({type: 'SET_BANNER', item})
+});
 
-    render = () => {
-        const translate = (word) => (<Translation>{(t, {i18n}) => t(word)}</Translation>);
-        return (
-            <>
-                <Banner banner={this.state.banner}/>
-                <form style={{marginTop: '50px'}} className="offset-md-2 col-md-9" onSubmit={this.submit}>
-                    <div className="form-group row">
-                        <label className="col-sm-4 col-form-label">{translate('signup.user-name')}:</label>
-                        <div className="col-sm-6">
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={this.state.username}
-                                onChange={this.handleUserNameChange}/>
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-4 col-form-label">{translate('signup.password')}:</label>
-                        <div className="col-sm-6">
-                            <input
-                                type="password"
-                                className="form-control"
-                                value={this.state.password}
-                                onChange={this.handlePasswordChange}/>
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-4 col-form-label">{translate('signup.confirm-password')}:</label>
-                        <div className="col-sm-6">
-                            <input
-                                type="password"
-                                className="form-control"
-                                value={this.state.cPwd}
-                                onChange={this.handleCPWDChange}/>
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <div className="col-sm-10">
-                            <button
-                                type="submit"
-                                className="btn btn-primary float-right"
-                                disabled={this.state.error}>
-                                {translate('nav-bar.sign-up')}
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </>
-        );
-    }
-}
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
 
 SignUp.propTypes = {
-    setLoggedIn: PropTypes.func,
-    history:     PropTypes.shape({
-        push: PropTypes.func
-    }).isRequired,
+    banner:    PropTypes.string,
+    setBanner: PropTypes.func
 };

@@ -1,101 +1,52 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {useParams} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import APIServices from '../common/services/api-service';
 import ArticleThumbnail from './ArticleThumbnail';
-import Banner from './Banner';
 
-class Tag extends React.Component {
-    constructor(props) {
-        super(props);
-        this.apiServices = new APIServices();
-        this.tag = '';
-        this.state = {
-            articles: [],
-            banner:   {}
-        };
-    }
+const Tag = ({user, setBanner}) => {
+    const apiServices = new APIServices();
+    const {t} = useTranslation();
+    const {tag} = useParams();
+    const [articles, setArticles] = useState([]);
 
-    componentDidMount = () => {
-        this._isMounted = true;
-        this.tag = this.props.match.params.tag;
-        if (!_.isUndefined(this.tag)) {
-            this.apiServices.articlesByTag(this.tag)
-            .then(data => {
-                if (this._isMounted) {
-                    this.setState({
-                        articles: data,
-                        banner:   {
-                            type:    'info',
-                            message: `Viewing articles by tag: ${this.tag}`
-                        }
-                    });
-                }
-            })
-            .catch(error => {
-                if (this._isMounted) {
-                    this.setState({
-                        banner: {
-                            type:    'danger',
-                            message: error.message
-                        }
-                    });
-                }
+    useEffect(() => {
+        apiServices.articlesByTag(tag)
+        .then(data => {
+            setArticles(data);
+            setBanner({
+                type:    'info',
+                message: `${t('info.tag-view')}: ${tag}`
             });
-        }
-    }
+        })
+        .catch(error => setBanner({
+            type:    'danger',
+            message: t(`error.${error.message}`)
+        }));
+    }, [tag]);
 
-    componentDidUpdate = () => {
-        if (this.tag !== this.props.match.params.tag) {
-            this.tag = this.props.match.params.tag;
-            if (!_.isUndefined(this.tag)) {
-                this.apiServices.articlesByTag(this.tag)
-                .then(data => {
-                    if (this._isMounted) {
-                        this.setState({
-                            articles: data,
-                            banner:   {
-                                type:    'info',
-                                message: `Viewing articles by tag: ${this.tag}`
-                            }
-                        });
-                    }
-                })
-                .catch(error => {
-                    if (this._isMounted) {
-                        this.setState({
-                            banner: {
-                                type:    'danger',
-                                message: error.message
-                            }
-                        });
-                    }
-                });
-            }
-        }
-    }
-
-    componentWillUnmount = () => {
-        this._isMounted = false;
-    }
-
-    render = () => (
+    return (
         <>
-            <Banner banner={this.state.banner}/>
-            {this.state.articles && this.state.articles.map((article, key) =>
-                <ArticleThumbnail key={key} article={article} currentUser={this.props.currentUser} thumbnail={false}></ArticleThumbnail>
+            {articles.map((article, key) =>
+                <ArticleThumbnail key={key} article={article} user={user} thumbnail={true}></ArticleThumbnail>
             )}
         </>
     );
-}
-
-Tag.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            tag: PropTypes.string
-        }).isRequired,
-    }).isRequired,
-    currentUser: PropTypes.string
 };
 
-export default Tag;
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+const mapDispatchToProps = dispatch => ({
+    setBanner: item => dispatch({type: 'SET_BANNER', item})
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tag);
+
+Tag.propTypes = {
+    user:      PropTypes.string,
+    setBanner: PropTypes.func
+};

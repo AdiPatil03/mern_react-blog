@@ -7,7 +7,7 @@ describe('Tag Component test suite: ', () => {
     it('should not render any posts if tags is empty', async() => {
         const match = {params: {}};
         render(
-            <Tag currentUser='Adi' match={match}/>
+            <Tag user='Adi' match={match}/>
         );
         expect(await screen.queryByText('aurelia')).toBeNull();
     });
@@ -15,7 +15,7 @@ describe('Tag Component test suite: ', () => {
     it('should display posts tagged with aurelia name', async() => {
         const match = {params: {tag: 'aurelia'}};
         render(
-            <Tag currentUser='Adi' match={match}/>
+            <Tag user='Adi' match={match}/>
         );
         expect(await screen.findByText('aurelia')).toBeInTheDocument();
     });
@@ -23,7 +23,7 @@ describe('Tag Component test suite: ', () => {
     it('should not display posts if wrong tag is passed', async() => {
         const match = {params: {tag: 'abcd'}};
         render(
-            <Tag currentUser='Adi' match={match}/>
+            <Tag user='Adi' match={match}/>
         );
         expect(await screen.queryByText('abcd')).toBeNull();
     });
@@ -33,12 +33,12 @@ describe('Tag Component test suite: ', () => {
         const match2 = {params: {tag: 'javascript'}};
 
         const {rerender} = render(
-            <Tag currentUser='Adi' match={match1}/>
+            <Tag user='Adi' match={match1}/>
         );
         expect(await screen.findByText('aurelia')).toBeInTheDocument();
 
         rerender(
-            <Tag currentUser='Adi' match={match2}/>
+            <Tag user='Adi' match={match2}/>
         );
         expect(await screen.findByText('javascript')).toBeInTheDocument();
     });
@@ -48,12 +48,12 @@ describe('Tag Component test suite: ', () => {
         const match2 = {params: {}};
 
         const {rerender} = render(
-            <Tag currentUser='Adi' match={match1}/>
+            <Tag user='Adi' match={match1}/>
         );
         expect(await screen.findByText('aurelia')).toBeInTheDocument();
 
         rerender(
-            <Tag currentUser='Adi' match={match2}/>
+            <Tag user='Adi' match={match2}/>
         );
         expect(await screen.findByText('aurelia')).toBeInTheDocument();
     });
@@ -63,14 +63,14 @@ describe('Tag Component test suite: ', () => {
         const match2 = {params: {tag: 'javascript'}};
 
         const {container, rerender} = render(
-            <Tag currentUser='Adi' match={match1}/>
+            <Tag user='Adi' match={match1}/>
         );
         expect(await screen.findByText('aurelia')).toBeInTheDocument();
 
         unmountComponentAtNode(container);
 
         rerender(
-            <Tag currentUser='Adi' match={match2}/>
+            <Tag user='Adi' match={match2}/>
         );
         expect(await screen.queryByText('javascript')).toBeNull();
     });

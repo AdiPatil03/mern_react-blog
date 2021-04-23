@@ -45,20 +45,20 @@ describe('ArticleThumbnail component test suite: ', () => {
         expect(container.querySelector('a')).toBeNull();
     });
 
-    it('should render Edit button if thumbnail is set false and currentUser is same as author', () => {
+    it('should render Edit button if thumbnail is set false and user is same as author', () => {
         render(
             <Router>
-                <ArticleThumbnail thumbnail={false} article={article} currentUser='Adi'/>
+                <ArticleThumbnail thumbnail={false} article={article} user='Adi'/>
             </Router>
         );
         expect(screen.getByRole('button')).toBeInTheDocument();
         expect(screen.getByText(content => content.startsWith('Edit Article'))).toBeInTheDocument();
     });
 
-    it('should not render Edit button if currentUser is different from author', () => {
+    it('should not render Edit button if user is different from author', () => {
         const {container} = render(
             <Router>
-                <ArticleThumbnail article={article} currentUser='DJ'/>
+                <ArticleThumbnail article={article} user='DJ'/>
             </Router>
         );
         expect(container.querySelector('button')).toBeNull();
@@ -68,7 +68,7 @@ describe('ArticleThumbnail component test suite: ', () => {
         const handleClick = jest.fn();
         render(
             <Router>
-                <ArticleThumbnail thumbnail={false} article={article} currentUser='Adi' setEdit={handleClick}/>
+                <ArticleThumbnail thumbnail={false} article={article} user='Adi' setEdit={handleClick}/>
             </Router>
         );
         fireEvent.click(screen.getByText(/Edit Article/i));
