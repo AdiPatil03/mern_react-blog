@@ -68,6 +68,10 @@ a:hover {
 .blog-post-body {
     font: 400 16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
+.create-post-tags {    
+    max-height: 125px;
+    overflow-y: auto;
+}
 
 /*
 * Footer

@@ -32,6 +32,14 @@ const ArticleForm = ({user, previousTags, clearEditMode, article, addTags, addAr
                     obj = {name: tag, isChecked: false};
                 }
                 return obj;
+            }).sort((a, b) => {
+                if (!a.isChecked && b.isChecked) {
+                    return 1;
+                }
+                if (a.isChecked && !b.isChecked) {
+                    return -1;
+                }
+                return 0;
             }));
         }
     }, [previousTags]);
@@ -117,7 +125,7 @@ const ArticleForm = ({user, previousTags, clearEditMode, article, addTags, addAr
                 </div>
                 <div className="form-group row">
                     <label className="col-sm-3 col-form-label">{t('article.tags')}:</label>
-                    <div className="form-group">
+                    <div className="form-group col-sm-9 create-post-tags">
                         {tags.length > 0
                             ? tags.map((tag, key) => (
                                 <div key={key} className="form-check">

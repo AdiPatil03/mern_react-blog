@@ -29,24 +29,22 @@ const LandingPage = ({tags, archives, user, banner, page, addArchives, addTags, 
     const location = window.location.pathname;
 
     useEffect(() => {
-        if (location === '/') {
-            apiServices.allArticlesPreviews()
-            .then(response => {
-                setArticles(response.previews);
-                addArchives(response.archives);
-                addTags(response.tags);
-            }).catch(error => {
-                if (error.message === 'no-article-written') {
-                    setArticles([]);
-                    clearArchives();
-                    clearTags();
-                }
-                setBanner({
-                    type:    'danger',
-                    message: t(`error.${error.message}`)
-                });
+        apiServices.allArticlesPreviews()
+        .then(response => {
+            setArticles(response.previews);
+            addArchives(response.archives);
+            addTags(response.tags);
+        }).catch(error => {
+            if (error.message === 'no-article-written') {
+                setArticles([]);
+                clearArchives();
+                clearTags();
+            }
+            setBanner({
+                type:    'danger',
+                message: t(`error.${error.message}`)
             });
-        }
+        });
     }, [location]);
 
     const homeComponent = () => (<Home articles={articles} user={user} page={page}/>);
@@ -74,22 +72,25 @@ const LandingPage = ({tags, archives, user, banner, page, addArchives, addTags, 
                                         <Route path="/signup" component={SignUp}/>
                                     </Switch>
                                 </div>
-                                <nav className="blog-pagination">
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-primary"
-                                        disabled={page === 0}
-                                        onClick={() => oldPage()}>
-                                        Older
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-primary"
-                                        disabled={page >= Math.floor(articles.length / 4)}
-                                        onClick={() => newPage()}>
-                                        Newer
-                                    </button>
-                                </nav>
+                                {location === '/'
+                                    ? <nav className="blog-pagination">
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-primary"
+                                            disabled={page === 0}
+                                            onClick={() => oldPage()}>
+                                            Older Articles
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-primary"
+                                            disabled={page >= Math.floor(articles.length / 4)}
+                                            onClick={() => newPage()}>
+                                            Newer Articles
+                                        </button>
+                                    </nav>
+                                    : <></>
+                                }
                             </div>
 
                             <Sidebar user={user} tags={tags} archives={archives}/>
