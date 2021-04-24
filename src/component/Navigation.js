@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {useLocation, useHistory} from 'react-router-dom';
 import i18n from '../i18n';
 import PropTypes from 'prop-types';
@@ -7,6 +7,9 @@ import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 
 import {ReactComponent as TranslateSVG} from '../resources/icon/translate.svg';
+import {ReactComponent as HamburgerSVG} from '../resources/icon/hamburger.svg';
+import {ReactComponent as SunSVG} from '../resources/icon/sun.svg';
+import {ReactComponent as MoonSVG} from '../resources/icon/moon.svg';
 
 const initialNavigation = {
     logInMenu: [
@@ -49,10 +52,12 @@ const Navigation = ({user, setUser, setBanner}) => {
     const {t} = useTranslation();
     const location = useLocation();
     const history = useHistory();
+    const langRef = useRef(null);
     const [language, setLanguage] = useState('English');
     const [navCollapse, setNavCollapse] = useState(false);
     const [dropdownState, setDropdownState] = useState(false);
     const [navigation, setNavigation] = useState(initialNavigation);
+    const [dark, setDark] = useState(false);
 
     useEffect(() => {
         switch (location.pathname) {
@@ -95,15 +100,38 @@ const Navigation = ({user, setUser, setBanner}) => {
         } else {
             document.getElementById('dropdownMenu').classList.remove('show');
         }
+
+        const handleOutsideClick = event => {
+            if (dropdownState && langRef.current && !langRef.current.contains(event.target)) {
+                document.getElementById('dropdownMenu').classList.remove('show');
+                setDropdownState(prevState => !prevState);
+            }
+        };
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
     }, [dropdownState]);
 
     useEffect(() => {
         if (navCollapse) {
-            document.getElementById('navbarTogglerDemo03').classList.add('show');
+            document.getElementById('navbarToggler').classList.add('show');
         } else {
-            document.getElementById('navbarTogglerDemo03').classList.remove('show');
+            document.getElementById('navbarToggler').classList.remove('show');
         }
     }, [navCollapse]);
+
+    const setDarkMode = event => {
+        if (dark) {
+            document.body.classList.remove('dark-mode');
+            document.body.classList.add('light-mode');
+        } else {
+            document.body.classList.remove('light-mode');
+            document.body.classList.add('dark-mode');
+        }
+        setDark(!dark);
+        event.preventDefault();
+    };
 
     const changeLanguage = (lng) => {
         let newLanguage = '';
@@ -135,19 +163,19 @@ const Navigation = ({user, setUser, setBanner}) => {
     return (
         <>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <a className="navbar-brand" href="/">Aditya&rsquo;s Blogs</a>
+                <Link className="navbar-brand" to="/">Aditya&rsquo;s Blogs</Link>
                 <button
                     className="navbar-toggler"
                     onClick={() => setNavCollapse(prevState => !prevState)}
                     type="button"
                     data-toggle="collapse"
-                    data-target="#navbarTogglerDemo03"
-                    aria-controls="navbarTogglerDemo03"
+                    data-target="#navbarToggler"
+                    aria-controls="navbarToggler"
                     aria-expanded="false"
                     aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
+                    <HamburgerSVG/>
                 </button>
-                <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <div className="collapse navbar-collapse" id="navbarToggler">
                     <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
                         {user !== ''
                             ? navigation.logInMenu.map((nav, key) => (
@@ -172,7 +200,7 @@ const Navigation = ({user, setUser, setBanner}) => {
                     </ul>
                     <form className="form-inline">
                         <TranslateSVG/>
-                        <div className="dropdown">
+                        <div className="dropdown" ref={langRef} >
                             <button
                                 className="btn btn-transparent dropdown-toggle"
                                 onClick={() => setDropdownState(prevState => !prevState)}
@@ -189,6 +217,14 @@ const Navigation = ({user, setUser, setBanner}) => {
                                 <a className="dropdown-item" onClick={() => changeLanguage('hi')} href="#">Hindi</a>
                             </div>
                         </div>
+                    </form>
+                    <form className="form-inline">
+                        <button onClick={e => setDarkMode(e)} className="btn btn-link">
+                            {dark
+                                ? <SunSVG/>
+                                : <MoonSVG/>
+                            }
+                        </button>
                     </form>
                 </div>
             </nav>

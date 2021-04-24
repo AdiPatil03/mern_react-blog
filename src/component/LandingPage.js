@@ -22,37 +22,46 @@ import Banner from './Banner';
 
 import UserContext from './UserContext';
 
-const LandingPage = ({tags, archives, user, banner, addArchives, addTags, setBanner}) => {
+const LandingPage = ({tags, archives, user, banner, page, addArchives, addTags, clearArchives, clearTags, setBanner, newPage, oldPage}) => {
     const apiServices = new APIServices();
     const {t} = useTranslation();
     const [articles, setArticles] = useState([]);
     const location = window.location.pathname;
 
     useEffect(() => {
-        apiServices.allArticlesPreviews()
-        .then(response => {
-            setArticles(response.previews);
-            addArchives(response.archives);
-            addTags(response.tags);
-        }).catch(error => setBanner({
-            type:    'danger',
-            message: t(`error.${error.message}`)
-        }));
+        if (location === '/') {
+            apiServices.allArticlesPreviews()
+            .then(response => {
+                setArticles(response.previews);
+                addArchives(response.archives);
+                addTags(response.tags);
+            }).catch(error => {
+                if (error.message === 'no-article-written') {
+                    setArticles([]);
+                    clearArchives();
+                    clearTags();
+                }
+                setBanner({
+                    type:    'danger',
+                    message: t(`error.${error.message}`)
+                });
+            });
+        }
     }, [location]);
 
-    const homeComponent = () => (<Home articles={articles} user={user}/>);
+    const homeComponent = () => (<Home articles={articles} user={user} page={page}/>);
 
     return (
         <>
             <Router>
                 <UserContext.Provider value={user}>
-                    <div className="container">
+                    <div>
                         <Navigation/>
                     </div>
 
-                    <main role="main" className="container">
-                        <div className="row">
-                            <div className="col-md-8 blog-main">
+                    <main role="main">
+                        <div className="row blog-row">
+                            <div className="col-md-8">
                                 <div className="blog-post">
                                     <Banner banner={banner}/>
                                     <Switch>
@@ -65,6 +74,22 @@ const LandingPage = ({tags, archives, user, banner, addArchives, addTags, setBan
                                         <Route path="/signup" component={SignUp}/>
                                     </Switch>
                                 </div>
+                                <nav className="blog-pagination">
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-primary"
+                                        disabled={page === 0}
+                                        onClick={() => oldPage()}>
+                                        Older
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-primary"
+                                        disabled={page >= Math.floor(articles.length / 4)}
+                                        onClick={() => newPage()}>
+                                        Newer
+                                    </button>
+                                </nav>
                             </div>
 
                             <Sidebar user={user} tags={tags} archives={archives}/>
@@ -85,22 +110,31 @@ const LandingPage = ({tags, archives, user, banner, addArchives, addTags, setBan
 const mapStateToProps = state => ({...state});
 
 const mapDispatchToProps = dispatch => ({
-    addArchives: item => dispatch({type: 'ADD_ARCHIVES', item}),
-    addTags:     item => dispatch({type: 'ADD_TAGS', item}),
-    setBanner:   item => dispatch({type: 'SET_BANNER', item})
+    addArchives:   item => dispatch({type: 'ADD_ARCHIVES', item}),
+    addTags:       item => dispatch({type: 'ADD_TAGS', item}),
+    clearArchives: item => dispatch({type: 'CLEAR_ARCHIVES'}),
+    clearTags:     item => dispatch({type: 'CLEAR_TAGS'}),
+    setBanner:     item => dispatch({type: 'SET_BANNER', item}),
+    newPage:       () => dispatch({type: 'NEW_PAGE'}),
+    oldPage:       () => dispatch({type: 'OLD_PAGE'})
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
 
 LandingPage.propTypes = {
-    archives: PropTypes.array,
-    tags:     PropTypes.array,
-    user:     PropTypes.string,
-    banner:   PropTypes.shape({
+    archives:      PropTypes.array,
+    tags:          PropTypes.array,
+    user:          PropTypes.string,
+    page:          PropTypes.number,
+    addArchives:   PropTypes.func,
+    addTags:       PropTypes.func,
+    clearArchives: PropTypes.func,
+    clearTags:     PropTypes.func,
+    setBanner:     PropTypes.func,
+    newPage:       PropTypes.func,
+    oldPage:       PropTypes.func,
+    banner:        PropTypes.shape({
         type:    PropTypes.string,
         message: PropTypes.string
     }),
-    addArchives: PropTypes.func,
-    addTags:     PropTypes.func,
-    setBanner:   PropTypes.func
 };

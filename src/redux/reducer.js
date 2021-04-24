@@ -3,8 +3,9 @@ import _ from 'lodash';
 const initialStore = {
     tags:     [],
     archives: [],
-    user:     '',
-    banner:   {}
+    user:     'Aditya',
+    banner:   {},
+    page:     0
 };
 
 const reducer = (state = initialStore, action) => {
@@ -21,6 +22,18 @@ const reducer = (state = initialStore, action) => {
                 tags: _.uniq(state.tags.concat(action.item))
             };
         }
+        case 'CLEAR_ARCHIVES': {
+            return {
+                ...state,
+                archives: []
+            };
+        }
+        case 'CLEAR_TAGS': {
+            return {
+                ...state,
+                tags: []
+            };
+        }
         case 'SET_USER': {
             return {
                 ...state,
@@ -31,6 +44,18 @@ const reducer = (state = initialStore, action) => {
             return {
                 ...state,
                 banner: action.item
+            };
+        }
+        case 'NEW_PAGE': {
+            return {
+                ...state,
+                page: state.page + 1
+            };
+        }
+        case 'OLD_PAGE': {
+            return {
+                ...state,
+                page: state.page - 1
             };
         }
         default: {

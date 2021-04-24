@@ -10,7 +10,7 @@ const ArticleThumbnail = ({thumbnail, article, user, setEdit}) => {
     return (
         <>
             {thumbnail
-                ? <Link className="p-2 text-muted" to={`/article/${article.slug}`}>
+                ? <Link to={`/article/${article.slug}`}>
                     <h2 className="blog-post-title">{article.title}</h2>
                 </Link>
                 : <h2 className="blog-post-title">{article.title}</h2>
@@ -20,7 +20,7 @@ const ArticleThumbnail = ({thumbnail, article, user, setEdit}) => {
                 <span key={key} className="badge badge-pill badge-info">{tag}</span>
             )}</p>
 
-            <p className="text-justify">{article.body}</p>
+            <p className="text-justify blog-post-body">{article.body}</p>
             {!thumbnail && user === article.author
                 ? <button onClick={setEdit} className="btn btn-link float-right">Edit Article &raquo;</button>
                 : ''}
