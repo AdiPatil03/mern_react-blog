@@ -46,13 +46,13 @@ const LandingPage = ({tags, archives, user, banner, addArchives, addTags, setBan
         <>
             <Router>
                 <UserContext.Provider value={user}>
-                    <div className="container">
+                    <div>
                         <Navigation/>
                     </div>
 
-                    <main role="main" className="container">
-                        <div className="row">
-                            <div className="col-md-8 blog-main">
+                    <main role="main">
+                        <div className="row blog-row">
+                            <div className="col-md-8 ">
                                 <div className="blog-post">
                                     <Banner banner={banner}/>
                                     <Switch>

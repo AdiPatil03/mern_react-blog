@@ -93,7 +93,7 @@ const SignUp = ({banner, setBanner}) => {
 
     return (
         <>
-            <form style={{marginTop: '50px'}} className="offset-md-2 col-md-9" onSubmit={e => submit(e)}>
+            <form style={{paddingTop: '50px'}} className="offset-md-2 col-md-10" onSubmit={e => submit(e)}>
                 <div className="form-group row">
                     <label className="col-sm-4 col-form-label">{t('signup.user-name')}:</label>
                     <div className="col-sm-6">
@@ -150,6 +150,9 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
 
 SignUp.propTypes = {
-    banner:    PropTypes.string,
+    banner: PropTypes.shape({
+        type:    PropTypes.string,
+        message: PropTypes.string
+    }),
     setBanner: PropTypes.func
 };

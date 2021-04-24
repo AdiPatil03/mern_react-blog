@@ -8,10 +8,10 @@ const Sidebar = ({user, tags, archives}) => {
 
     return (
         <aside className="col-md-4 blog-sidebar">
-            <p>{t('home.welcome')}, {user === '' ? t('home.guest') : user}</p>
-            <div className="p-3 mb-3 bg-light rounded">
-                <h4 className="font-italic">{t('home.tags')}</h4>
-                <p className="mb-0">
+            <p className="sidebar-title">{t('home.welcome')}, {user === '' ? t('home.guest') : user}</p>
+            <div className="p-3 mb-3 blog-section rounded">
+                <h4 className="sidebar-title">{t('home.tags')}</h4>
+                <p>
                     {tags.map((tag, key) => (
                         <Link key={key} to={`/tags/${tag}`}>
                             <span className="badge badge-pill badge-info">{tag}</span>
@@ -20,9 +20,9 @@ const Sidebar = ({user, tags, archives}) => {
                 </p>
             </div>
 
-            <div className="p-3">
-                <h4 className="font-italic">{t('home.archives')}</h4>
-                <ol className="list-unstyled mb-0">
+            <div className="p-3 mb-3 blog-section rounded">
+                <h4 className="sidebar-title">{t('home.archives')}</h4>
+                <ol className="list-unstyled sidebar-list">
                     {archives.map((archive, key) => (
                         <li key={key}>
                             <Link to={`/archives/${archive}`}>{archive}</Link>
@@ -31,9 +31,9 @@ const Sidebar = ({user, tags, archives}) => {
                 </ol>
             </div>
 
-            <div className="p-3">
-                <h4 className="font-italic">{t('home.about-me')}</h4>
-                <ol className="list-unstyled">
+            <div className="p-3 mb-3 blog-section rounded">
+                <h4 className="sidebar-title">{t('home.about-me')}</h4>
+                <ol className="list-unstyled sidebar-list">
                     <li><a href="https://github.com/AdiPatil03" target="blank">GitHub</a></li>
                     <li><a href="https://www.linkedin.com/in/adityapatil3" target="blank">Linkedin</a></li>
                 </ol>

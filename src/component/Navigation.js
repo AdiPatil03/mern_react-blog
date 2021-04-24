@@ -7,6 +7,9 @@ import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 
 import {ReactComponent as TranslateSVG} from '../resources/icon/translate.svg';
+import {ReactComponent as HamburgerSVG} from '../resources/icon/hamburger.svg';
+import {ReactComponent as SunSVG} from '../resources/icon/sun.svg';
+import {ReactComponent as MoonSVG} from '../resources/icon/moon.svg';
 
 const initialNavigation = {
     logInMenu: [
@@ -53,6 +56,7 @@ const Navigation = ({user, setUser, setBanner}) => {
     const [navCollapse, setNavCollapse] = useState(false);
     const [dropdownState, setDropdownState] = useState(false);
     const [navigation, setNavigation] = useState(initialNavigation);
+    const [dark, setDark] = useState(false);
 
     useEffect(() => {
         switch (location.pathname) {
@@ -105,6 +109,18 @@ const Navigation = ({user, setUser, setBanner}) => {
         }
     }, [navCollapse]);
 
+    const setDarkMode = event => {
+        if (dark) {
+            document.body.classList.remove('dark-mode');
+            document.body.classList.add('light-mode');
+        } else {
+            document.body.classList.remove('light-mode');
+            document.body.classList.add('dark-mode');
+        }
+        setDark(!dark);
+        event.preventDefault();
+    };
+
     const changeLanguage = (lng) => {
         let newLanguage = '';
         switch (lng) {
@@ -145,7 +161,7 @@ const Navigation = ({user, setUser, setBanner}) => {
                     aria-controls="navbarTogglerDemo03"
                     aria-expanded="false"
                     aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
+                    <HamburgerSVG/>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
                     <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -189,6 +205,14 @@ const Navigation = ({user, setUser, setBanner}) => {
                                 <a className="dropdown-item" onClick={() => changeLanguage('hi')} href="#">Hindi</a>
                             </div>
                         </div>
+                    </form>
+                    <form className="form-inline">
+                        <button onClick={e => setDarkMode(e)} className="btn btn-link">
+                            {dark
+                                ? <SunSVG/>
+                                : <MoonSVG/>
+                            }
+                        </button>
                     </form>
                 </div>
             </nav>

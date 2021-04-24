@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import {useTranslation} from 'react-i18next';
 import APIService from '../common/services/api-service';
 
@@ -15,28 +16,35 @@ const Login = ({setUser, setBanner}) => {
     const submit = event => {
         const data = {username, password};
 
-        apiService.login(data)
-        .then(resp => {
-            setUser(resp.user);
-            history.push({
-                pathname: '/'
+        if (!_.isEmpty(username) && !_.isEmpty(password)) {
+            apiService.login(data)
+            .then(resp => {
+                setUser(resp.user);
+                history.push({
+                    pathname: '/'
+                });
+            })
+            .catch(error => {
+                setusername('');
+                setPassword('');
+                setBanner({
+                    type:    'danger',
+                    message: t(`error.${error.message}`)
+                });
             });
-        })
-        .catch(error => {
-            setusername('');
-            setPassword('');
+        } else {
             setBanner({
                 type:    'danger',
-                message: t(`error.${error.message}`)
+                message: t('error.fill-form')
             });
-        });
+        }
 
         event.preventDefault();
     };
 
     return (
         <>
-            <form style={{marginTop: '50px'}} className="offset-md-2 col-md-9" onSubmit={e => submit(e)}>
+            <form style={{paddingTop: '50px'}} className="offset-md-2 col-md-10" onSubmit={e => submit(e)}>
                 <div className="form-group row">
                     <label className="col-sm-4 col-form-label">{t('login.user-name')}:</label>
                     <div className="col-sm-6">
