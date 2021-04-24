@@ -11,6 +11,9 @@ h1, h2, h3, h4, h5, h6 {
 .col-form-label {
     color: #6c757d;
 }
+a:hover {
+    text-decoration: none;
+}
 
 /*
 * Blog name and description
@@ -34,7 +37,7 @@ h1, h2, h3, h4, h5, h6 {
 * Pagination
 */
 .blog-pagination {
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
 }
 .blog-pagination > .btn {
     border-radius: 2rem;
@@ -46,11 +49,10 @@ h1, h2, h3, h4, h5, h6 {
 .blog-row {    
     margin-right: 0px;
     margin-left: 0px;
-    padding: 0 100px;
 }
 .blog-post {
     margin-top: 25px;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
     min-height: 750px;
 }
 .blog-post-title {
@@ -92,8 +94,9 @@ h1, h2, h3, h4, h5, h6 {
 .badge-info {
     margin-right: 3px;
     background: rgba(0, 123, 255, 0.125);
-    padding: 10px;
+    padding: 5px 10px;
     color: #6c757d;
+    margin-bottom: 2px;
 }
 .blog-sidebar {
     margin-top: 25px;
@@ -121,7 +124,64 @@ h1, h2, h3, h4, h5, h6 {
 }
 .navbar {
     border-bottom: .05rem solid #aeadad;
-    padding: 0.5rem 115px
+}
+.dropdown-item {
+    color: #6c757d;
+}
+.dropdown-menu {
+    border: .05rem solid #aeadad;
+}
+
+/*
+* Responsive styles
+*/
+@media (min-width: 500px) {
+    .blog-row {
+        padding: 0 100px;
+    }
+    .navbar {
+        padding: 0.5rem 115px;
+    }
+}
+@media (min-width: 750px) {
+    .blog-row {
+        padding: 0 150px;
+    }
+    .navbar {
+        padding: 0.5rem 165px;
+    }
+}
+@media (min-width: 1000px) {
+    .blog-row {
+        padding: 0 200px;
+    }
+    .navbar {
+        padding: 0.5rem 215px;
+    }
+}
+@media (min-width: 1250px) {
+    .blog-row {
+        padding: 0 250px;
+    }
+    .navbar {
+        padding: 0.5rem 265px;
+    }
+}
+@media (min-width: 1500px) {
+    .blog-row {
+        padding: 0 200px;
+    }
+    .navbar {
+        padding: 0.5rem 215px;
+    }
+}
+@media (min-width: 1750px) {
+    .blog-row {
+        padding: 0 300px;
+    }
+    .navbar {
+        padding: 0.5rem 315px;
+    }
 }
 
 /*
@@ -147,6 +207,9 @@ h1, h2, h3, h4, h5, h6 {
     .form-control {
         background: $dark-mode-nav;
     }
+    .dropdown-menu.show {
+        background: $dark-mode-nav;
+    }
 }
 .light-mode {
     background: #f6f6f7;
@@ -166,6 +229,9 @@ h1, h2, h3, h4, h5, h6 {
         color: $light-mode-font-color;
     }
     .form-control {
+        background: $light-mode-nav;
+    }
+    .dropdown-menu.show {
         background: $light-mode-nav;
     }
 }
