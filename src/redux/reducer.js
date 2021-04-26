@@ -3,7 +3,7 @@ import _ from 'lodash';
 const initialStore = {
     tags:     [],
     archives: [],
-    user:     'Aditya',
+    user:     '',
     banner:   {},
     page:     0
 };
