@@ -1,3 +1,7 @@
+# MERN - Blog application
+Please read all the details about complete application [here](https://github.com/AdiPatil03/mern_express-blog)
+I have generated production build by running **npm run build** in root directory and copied the build folder on the other repo where I can deploy it on the server.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
