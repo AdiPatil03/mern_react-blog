@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {useTranslation} from 'react-i18next';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
 
 const ArticleThumbnail = ({thumbnail, article, user, setEdit}) => {
+    const {t} = useTranslation();
     if (_.isUndefined(article.title)) {
         return null;
     }
@@ -22,7 +24,7 @@ const ArticleThumbnail = ({thumbnail, article, user, setEdit}) => {
 
             <p className="text-justify blog-post-body">{article.body}</p>
             {!thumbnail && user === article.author
-                ? <button onClick={setEdit} className="btn btn-link float-right">Edit Article &raquo;</button>
+                ? <button onClick={setEdit} className="btn btn-link float-right">{t('article.edit-article')} &raquo;</button>
                 : ''}
         </>
     );

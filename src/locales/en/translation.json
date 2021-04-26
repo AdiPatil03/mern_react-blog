@@ -15,7 +15,8 @@
         "body": "Body",
         "tags": "Tags",
         "add-new-tag": "Add Tag",
-        "submit": "Submit"
+        "submit": "Submit",
+        "edit-article": "Edit Article"
     },
     "signup": {
         "user-name": "Username",
