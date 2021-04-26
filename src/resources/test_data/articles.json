@@ -1,0 +1,50 @@
+[
+    {
+        "title": "React Hooks",
+        "body": "Hooks are functions that let developers hook into React state and lifecycle features from function components. Hooks don’t work inside classes — they let you use React without classes. React provides a few built-in hooks like useState, useContext, useReducer and useEffect. Others are documented in the Hooks API Reference. useState , useReducer and useEffect, which are the most used, are for controlling state and side effects respectively. Hooks should only be called at the top level (not inside loops or if statements). Hooks should only be called from React function components, not normal functions or class components. Although these rules can't be enforced at runtime, code analysis tools such as linters can be configured to detect many mistakes during development. The rules apply to both usage of hooks and the implementation of custom hooks, which may call other hooks. Hooks are functions that let developers hook into React state and lifecycle features from function components. Hooks don’t work inside classes — they let you use React without classes. React provides a few built-in hooks like useState, useContext, useReducer and useEffect. Others are documented in the Hooks API Reference. useState , useReducer and useEffect, which are the most used, are for controlling state and side effects respectively. Hooks should only be called at the top level (not inside loops or if statements). Hooks should only be called from React function components, not normal functions or class components. Although these rules can't be enforced at runtime, code analysis tools such as linters can be configured to detect many mistakes during development. The rules apply to both usage of hooks and the implementation of custom hooks, which may call other hooks. Hooks are functions that let developers hook into React state and lifecycle features from function components. Hooks don’t work inside classes — they let you use React without classes. React provides a few built-in hooks like useState, useContext, useReducer and useEffect. Others are documented in the Hooks API Reference. useState , useReducer and useEffect, which are the most used, are for controlling state and side effects respectively. Hooks should only be called at the top level (not inside loops or if statements). Hooks should only be called from React function components, not normal functions or class components. Although these rules can't be enforced at runtime, code analysis tools such as linters can be configured to detect many mistakes during development. The rules apply to both usage of hooks and the implementation of custom hooks, which may call other hooks. Hooks are functions that let developers hook into React state and lifecycle features from function components. Hooks don’t work inside classes — they let you use React without classes. React provides a few built-in hooks like useState, useContext, useReducer and useEffect. Others are documented in the Hooks API Reference. useState , useReducer and useEffect, which are the most used, are for controlling state and side effects respectively. Hooks should only be called at the top level (not inside loops or if statements). Hooks should only be called from React function components, not normal functions or class components. Although these rules can't be enforced at runtime, code analysis tools such as linters can be configured to detect many mistakes during development. The rules apply to both usage of hooks and the implementation of custom hooks, which may call other hooks.",
+        "author": "Admin",
+        "slug": "react-hooks",
+        "tags": ["mern-blog", "react", "hooks"],
+        "createdAt": "June 1, 2020"
+    },
+    {
+        "title": "Bootstrap Wiki",
+        "body": "Bootstrap is a HTML, CSS & JS Library that focuses on simplifying the development of informative web pages (as opposed to web apps). The primary purpose of adding it to a web project is to apply Bootstrap's choices of color, size, font and layout to that project. As such, the primary factor is whether the developers in charge find those choices to their liking. Once added to a project, Bootstrap provides basic style definitions for all HTML elements. The result is a uniform appearance for prose, tables and form elements across web browsers. In addition, developers can take advantage of CSS classes defined in Bootstrap to further customize the appearance of their contents. For example, Bootstrap has provisioned for light- and dark-colored tables, page headings, more prominent pull quotes, and text with a highlight. Bootstrap also comes with several JavaScript components in the form of jQuery plugins. They provide additional user interface elements such as dialog boxes, tooltips, and carousels. Each Bootstrap component consists of an HTML structure, CSS declarations, and in some cases accompanying JavaScript code. They also extend the functionality of some existing interface elements, including for example an auto-complete function for input fields.",
+        "author": "Aditya",
+        "slug": "bootstrap-wiki",
+        "tags": ["mern-blog", "bootstrap", "scss", "wiki"],
+        "createdAt": "April 17, 2020"
+    },
+    {
+        "title": "React Redux",
+        "body": "What to learn can be an overwhelming question for a JavaScript developer. It helps to narrow the range of options by learning one thing at a time and focusing on problems you find in your work. Redux is a pattern for managing application state. If you do not have problems with state management, you might find the benefits of Redux harder to understand. Some UI libraries (like React) have their own state management system. If you are using one of these libraries, especially if you are just learning to use them, we encourage you to learn the capabilities of that built-in system first. It might be all you need to build your application. If your application becomes so complex that you are confused about where state is stored or how state changes, then it is a good time to learn Redux.",
+        "author": "Admin",
+        "slug": "react-redux",
+        "tags": ["mern-blog", "react-redux", "redux", "state management"],
+        "createdAt": "December 1, 2019"
+    },
+    {
+        "title": "React Internationalization",
+        "body": "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel the charm of existence in this spot, which was created for the bliss of souls like mine. I am so happy, my dear friend, so absorbed in the exquisite sense of mere tranquil existence, that I neglect my talents. I should be incapable of drawing a single stroke at the present moment; and yet I feel that I never was a greater artist than now. When, while the lovely valley teems with ",
+        "author": "Aditya",
+        "slug": "react-internationalization",
+        "tags": ["mern-blog", "react-i18next", "i18n", "Internationalization"],
+        "createdAt": "May 23, 2021"
+    },
+    {
+        "title": "Express Wiki",
+        "body": "Express is a minimal and flexible Node.js web application framework that provides a robust set of features to develop web and mobile applications. It facilitates the rapid development of Node based Web applications. Following are some of the core features of Express framework: Allows to set up middlewares to respond to HTTP Requests. Defines a routing table which is used to perform different actions based on HTTP Method and URL. Allows to dynamically render HTML Pages based on passing arguments to templates",
+        "author": "Admin",
+        "slug": "express-wiki",
+        "tags": ["mern-blog", "express", "NodeJS", "back-end"],
+        "createdAt": "March 1, 2020"
+    },
+    {
+        "title": "MongoDB Wiki",
+        "body": "MongoDB is a cross-platform, document oriented database that provides, high performance, high availability, and easy scalability. MongoDB works on concept of collection and document. Database is a physical container for collections. Each database gets its own set of files on the file system. A single MongoDB server typically has multiple databases. Collection is a group of MongoDB documents. It is the equivalent of an RDBMS table. A collection exists within a single database. Collections do not enforce a schema. Documents within a collection can have different fields. Typically, all documents in a collection are of similar or related purpose. A document is a set of key-value pairs. Documents have dynamic schema. Dynamic schema means that documents in the same collection do not need to have the same set of fields or structure, and common fields in a collection's documents may hold different types of data.",
+        "author": "Aditya",
+        "slug": "mongodb-wiki",
+        "tags": ["mern-blog", "MongoDB", "No SQL"],
+        "createdAt": "January 1, 2018"
+    }
+]

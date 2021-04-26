@@ -20,9 +20,7 @@ import Archive from './Archive';
 import Sidebar from './Sidebar';
 import Banner from './Banner';
 
-import UserContext from './UserContext';
-
-const LandingPage = ({tags, archives, user, banner, page, addArchives, addTags, clearArchives, clearTags, setBanner, newPage, oldPage}) => {
+const LandingPage = ({tags, archives, user, banner, addArchives, addTags, clearArchives, clearTags, setBanner, resetPage}) => {
     const apiServices = new APIServices();
     const {t} = useTranslation();
     const [articles, setArticles] = useState([]);
@@ -47,61 +45,47 @@ const LandingPage = ({tags, archives, user, banner, page, addArchives, addTags, 
                 });
             });
         }
+        resetPage();
     }, [location]);
 
-    const homeComponent = () => (<Home articles={articles} user={user} page={page}/>);
+    const homeComponent = () => (<Home articles={articles} user={user}/>);
 
     return (
         <>
             <Router>
-                <UserContext.Provider value={user}>
-                    <div>
-                        <Navigation/>
-                    </div>
+                <header>
+                    <Navigation/>
+                </header>
 
-                    <main role="main">
-                        <div className="row blog-row">
-                            <div className="col-md-8">
-                                <div className="blog-post">
-                                    <Banner banner={banner}/>
-                                    <Switch>
-                                        <Route path="/" render={homeComponent} exact/>
-                                        <Route path="/login" component={Login}/>
-                                        <Route path="/article/:slug" component={Article}/>
-                                        <Route path="/tags/:tag" component={Tag}/>
-                                        <Route path="/archives/:archive" component={Archive}/>
-                                        <Route path="/create-article" component={ArticleForm}/>
-                                        <Route path="/signup" component={SignUp}/>
-                                    </Switch>
-                                </div>
-                                <nav className="blog-pagination">
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-primary"
-                                        disabled={page === 0}
-                                        onClick={() => oldPage()}>
-                                        Older
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-primary"
-                                        disabled={page >= Math.floor(articles.length / 4)}
-                                        onClick={() => newPage()}>
-                                        Newer
-                                    </button>
-                                </nav>
+                <main role="main">
+                    <div className="row blog-row">
+                        <div className="col-md-8">
+                            <div className="blog-post">
+                                <Banner banner={banner}/>
+                                <Switch>
+                                    <Route path="/" render={homeComponent} exact/>
+                                    <Route path="/login" component={Login}/>
+                                    <Route path="/article/:slug" component={Article}/>
+                                    <Route path="/tags/:tag" component={Tag}/>
+                                    <Route path="/archives/:archive" component={Archive}/>
+                                    <Route path="/create-article" component={ArticleForm}/>
+                                    <Route path="/signup" component={SignUp}/>
+                                </Switch>
                             </div>
-
-                            <Sidebar user={user} tags={tags} archives={archives}/>
                         </div>
-                    </main>
 
-                    <footer className="blog-footer">
-                        <p>
-                            <a href="#">Back to top</a>
+                        <Sidebar user={user} tags={tags} archives={archives}/>
+                    </div>
+                </main>
+
+                <footer className="blog-footer">
+                    <div className="container">
+                        <p>Find more about me at:
+                            <a className="col-md-4" href="https://github.com/AdiPatil03" target="blank">GitHub</a> and
+                            <a className="col-md-4" href="https://www.linkedin.com/in/adityapatil3" target="blank">LinkedIn</a>
                         </p>
-                    </footer>
-                </UserContext.Provider>
+                    </div>
+                </footer>
             </Router>
         </>
     );
@@ -115,8 +99,7 @@ const mapDispatchToProps = dispatch => ({
     clearArchives: item => dispatch({type: 'CLEAR_ARCHIVES'}),
     clearTags:     item => dispatch({type: 'CLEAR_TAGS'}),
     setBanner:     item => dispatch({type: 'SET_BANNER', item}),
-    newPage:       () => dispatch({type: 'NEW_PAGE'}),
-    oldPage:       () => dispatch({type: 'OLD_PAGE'})
+    resetPage:     () => dispatch({type: 'RESET_PAGE'})
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
@@ -125,14 +108,12 @@ LandingPage.propTypes = {
     archives:      PropTypes.array,
     tags:          PropTypes.array,
     user:          PropTypes.string,
-    page:          PropTypes.number,
     addArchives:   PropTypes.func,
     addTags:       PropTypes.func,
     clearArchives: PropTypes.func,
     clearTags:     PropTypes.func,
     setBanner:     PropTypes.func,
-    newPage:       PropTypes.func,
-    oldPage:       PropTypes.func,
+    resetPage:     PropTypes.func,
     banner:        PropTypes.shape({
         type:    PropTypes.string,
         message: PropTypes.string

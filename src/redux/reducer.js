@@ -3,7 +3,7 @@ import _ from 'lodash';
 const initialStore = {
     tags:     [],
     archives: [],
-    user:     'Aditya',
+    user:     '',
     banner:   {},
     page:     0
 };
@@ -56,6 +56,12 @@ const reducer = (state = initialStore, action) => {
             return {
                 ...state,
                 page: state.page - 1
+            };
+        }
+        case 'RESET_PAGE': {
+            return {
+                ...state,
+                page: 0
             };
         }
         default: {

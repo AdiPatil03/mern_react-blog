@@ -30,14 +30,6 @@ const Sidebar = ({user, tags, archives}) => {
                     ))}
                 </ol>
             </div>
-
-            <div className="p-3 mb-3 blog-section rounded">
-                <h4 className="sidebar-title">{t('home.about-me')}</h4>
-                <ol className="list-unstyled sidebar-list">
-                    <li><a href="https://github.com/AdiPatil03" target="blank">GitHub</a></li>
-                    <li><a href="https://www.linkedin.com/in/adityapatil3" target="blank">Linkedin</a></li>
-                </ol>
-            </div>
         </aside>
     );
 };

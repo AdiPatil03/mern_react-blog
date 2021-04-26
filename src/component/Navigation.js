@@ -163,7 +163,7 @@ const Navigation = ({user, setUser, setBanner}) => {
     return (
         <>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <Link className="navbar-brand" to="/">Aditya&rsquo;s Blogs</Link>
+                <Link className="navbar-brand" to="/">Aditya&rsquo;s Blog</Link>
                 <button
                     className="navbar-toggler"
                     onClick={() => setNavCollapse(prevState => !prevState)}
@@ -199,16 +199,16 @@ const Navigation = ({user, setUser, setBanner}) => {
                         }
                     </ul>
                     <form className="form-inline">
-                        <TranslateSVG/>
                         <div className="dropdown" ref={langRef} >
                             <button
-                                className="btn btn-transparent dropdown-toggle"
+                                className="btn btn-transparent no-outline"
                                 onClick={() => setDropdownState(prevState => !prevState)}
                                 type="button"
                                 id="dropdownMenuButton"
                                 data-toggle="dropdown"
                                 aria-haspopup="true"
                                 aria-expanded="false">
+                                <TranslateSVG/>
                                 {language}
                             </button>
                             <div className="dropdown-menu" id="dropdownMenu" aria-labelledby="dropdownMenuButton">
@@ -219,7 +219,7 @@ const Navigation = ({user, setUser, setBanner}) => {
                         </div>
                     </form>
                     <form className="form-inline">
-                        <button onClick={e => setDarkMode(e)} className="btn btn-link">
+                        <button onClick={e => setDarkMode(e)} className="btn btn-link no-outline">
                             {dark
                                 ? <SunSVG/>
                                 : <MoonSVG/>
