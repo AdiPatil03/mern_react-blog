@@ -58,6 +58,12 @@ const reducer = (state = initialStore, action) => {
                 page: state.page - 1
             };
         }
+        case 'RESET_PAGE': {
+            return {
+                ...state,
+                page: 0
+            };
+        }
         default: {
             return state;
         }

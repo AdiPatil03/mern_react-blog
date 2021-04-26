@@ -109,23 +109,23 @@ const ArticleForm = ({user, previousTags, clearEditMode, article, addTags, addAr
 
     return (
         <>
-            <form style={{marginTop: '50px'}} onSubmit={submit}>
+            <form className="col-md-12 form-style" onSubmit={submit}>
                 <div className="form-group row ">
-                    <label className="col-sm-3 col-form-label">{t('article.title')}:</label>
-                    <input type="text" className="col-sm-9 form-control" value={title} onChange={e => setTitle(e.target.value)}/>
+                    <label className="col-sm-2 col-form-label">{t('article.title')}:</label>
+                    <input type="text" className="col-sm-10 form-control" value={title} onChange={e => setTitle(e.target.value)}/>
                 </div>
                 <div className="form-group row">
-                    <label className="col-sm-3 col-form-label">{t('article.body')}:</label>
+                    <label className="col-sm-2 col-form-label">{t('article.body')}:</label>
                     <textarea
                         type="text"
                         rows="5"
-                        className="form-control col-md-9"
+                        className="form-control col-md-10"
                         value={body}
                         onChange={e => setBody(e.target.value)}/>
                 </div>
                 <div className="form-group row">
-                    <label className="col-sm-3 col-form-label">{t('article.tags')}:</label>
-                    <div className="form-group col-sm-9 create-post-tags">
+                    <label className="col-sm-2 col-form-label">{t('article.tags')}:</label>
+                    <div className="form-group col-sm-10 create-post-tags">
                         {tags.length > 0
                             ? tags.map((tag, key) => (
                                 <div key={key} className="form-check">
@@ -142,7 +142,7 @@ const ArticleForm = ({user, previousTags, clearEditMode, article, addTags, addAr
                         }
                     </div>
                 </div>
-                <div className="form-group row offset-md-3">
+                <div className="form-group row offset-md-2">
                     <input type="text" className="col-sm-3 form-control" value={newTag} onChange={e => setNewTag(e.target.value)}/>
                     <button
                         type="button"
