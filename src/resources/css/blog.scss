@@ -6,17 +6,7 @@ $global-font-color: #6c757d;
 /*
 * Global styles
 */
-body {
-    margin-bottom: 60px;
-}
-main {
-    position: absolute;
-    top: 60px;
-    bottom: 60px;
-    right: 0;
-    left: 0;
-    overflow-y: auto;
-}
+
 h1, h2, h3, h4, h5, h6 {
     font: 400 16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
@@ -71,7 +61,7 @@ a:hover {
 .blog-post {
     margin-top: 2rem;
     margin-bottom: 2rem;
-    // min-height: 761px;
+    min-height: 827px;
 }
 .blog-post-title {
     color: #3391ff;
@@ -97,7 +87,6 @@ a:hover {
 .blog-footer {
     color: #007bff;
     text-align: center;
-    position: absolute;
     bottom: 0;
     width: 100%;
     height: 60px;
@@ -151,7 +140,6 @@ a:hover {
     color: $global-font-color !important;
 }
 .navbar {
-    height: 60px;
     border-bottom: .05rem solid #aeadad;
 }
 .dropdown-item {
